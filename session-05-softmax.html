@@ -1,0 +1,1893 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex, nofollow">
+<title>87%는 어디서 나온 숫자인가 — 5회차 실습</title>
+<style>
+  :root {
+    --paper: #F1F4F7;
+    --card: #FBFCFD;
+    --ink: #0F1720;
+    --ink-2: #4A5763;
+    --ink-3: #7C8794;
+    --rule: #D8E0E8;
+    --grid: #E4EAF0;
+    --pen: #0A5AA8;
+    --pen-soft: rgba(10, 90, 168, 0.10);
+    --warm: #A84A12;
+    --warm-soft: rgba(168, 74, 18, 0.10);
+    --dash: #8A97A4;
+    --ok: #1C6B4A;
+    --bad: #A32B2B;
+
+    --font-body: "Pretendard Variable", Pretendard, -apple-system, BlinkMacSystemFont,
+      "Apple SD Gothic Neo", "Noto Sans KR", "Malgun Gothic", system-ui, sans-serif;
+    --font-mono: ui-monospace, SFMono-Regular, "SF Mono", "Cascadia Mono", Menlo,
+      Consolas, "D2Coding", monospace;
+
+    --r: 3px;
+  }
+
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --paper: #0E141A;
+      --card: #151D25;
+      --ink: #E4EAF0;
+      --ink-2: #9AA8B5;
+      --ink-3: #6E7C8A;
+      --rule: #26313C;
+      --grid: #1E2833;
+      --pen: #5FA9EE;
+      --pen-soft: rgba(95, 169, 238, 0.14);
+      --warm: #E3944F;
+      --warm-soft: rgba(227, 148, 79, 0.13);
+      --dash: #6E7C8A;
+      --ok: #63C79A;
+      --bad: #E4756F;
+    }
+  }
+
+  :root[data-theme="dark"] {
+    --paper: #0E141A;
+    --card: #151D25;
+    --ink: #E4EAF0;
+    --ink-2: #9AA8B5;
+    --ink-3: #6E7C8A;
+    --rule: #26313C;
+    --grid: #1E2833;
+    --pen: #5FA9EE;
+    --pen-soft: rgba(95, 169, 238, 0.14);
+    --warm: #E3944F;
+    --warm-soft: rgba(227, 148, 79, 0.13);
+    --dash: #6E7C8A;
+    --ok: #63C79A;
+    --bad: #E4756F;
+  }
+
+  :root[data-theme="light"] {
+    --paper: #F1F4F7;
+    --card: #FBFCFD;
+    --ink: #0F1720;
+    --ink-2: #4A5763;
+    --ink-3: #7C8794;
+    --rule: #D8E0E8;
+    --grid: #E4EAF0;
+    --pen: #0A5AA8;
+    --pen-soft: rgba(10, 90, 168, 0.10);
+    --warm: #A84A12;
+    --warm-soft: rgba(168, 74, 18, 0.10);
+    --dash: #8A97A4;
+    --ok: #1C6B4A;
+    --bad: #A32B2B;
+  }
+
+  body {
+    background: var(--paper);
+    color: var(--ink);
+    font-family: var(--font-body);
+    font-size: 16px;
+    line-height: 1.7;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  .wrap {
+    max-width: 1080px;
+    margin: 0 auto;
+    padding: 0 20px 96px;
+  }
+
+  /* ── 머리 ─────────────────────────────── */
+
+  header.top {
+    padding: 44px 0 26px;
+    border-bottom: 1px solid var(--rule);
+  }
+
+  .eyebrow {
+    font-family: var(--font-mono);
+    font-size: 11.5px;
+    letter-spacing: 0.14em;
+    color: var(--ink-3);
+    text-transform: uppercase;
+    margin-bottom: 10px;
+  }
+
+  h1 {
+    font-size: clamp(28px, 4.4vw, 42px);
+    line-height: 1.18;
+    font-weight: 700;
+    letter-spacing: -0.02em;
+    text-wrap: balance;
+    margin-bottom: 10px;
+  }
+
+  .lede {
+    color: var(--ink-2);
+    max-width: 62ch;
+    font-size: 16.5px;
+  }
+
+  /* ── 스텝 네비 ─────────────────────────── */
+
+  nav.steps {
+    position: sticky;
+    top: 0;
+    z-index: 20;
+    background: var(--paper);
+    border-bottom: 1px solid var(--rule);
+    display: flex;
+    gap: 2px;
+    overflow-x: auto;
+    scrollbar-width: thin;
+    margin-bottom: 34px;
+  }
+
+  nav.steps button {
+    flex: 0 0 auto;
+    appearance: none;
+    background: none;
+    border: 0;
+    border-bottom: 2px solid transparent;
+    color: var(--ink-3);
+    font-family: var(--font-body);
+    font-size: 14.5px;
+    font-weight: 500;
+    padding: 15px 16px 13px;
+    cursor: pointer;
+    white-space: nowrap;
+    display: flex;
+    align-items: baseline;
+    gap: 8px;
+  }
+
+  nav.steps button .n {
+    font-family: var(--font-mono);
+    font-size: 12px;
+    color: var(--ink-3);
+  }
+
+  nav.steps button:hover {
+    color: var(--ink);
+  }
+
+  nav.steps button[aria-selected="true"] {
+    color: var(--ink);
+    border-bottom-color: var(--pen);
+    font-weight: 600;
+  }
+
+  nav.steps button[aria-selected="true"] .n {
+    color: var(--pen);
+  }
+
+  /* ── 패널 ─────────────────────────────── */
+
+  section.panel[hidden] {
+    display: none;
+  }
+
+  .panel-head {
+    margin-bottom: 24px;
+  }
+
+  .panel-head h2 {
+    font-size: clamp(21px, 2.6vw, 27px);
+    font-weight: 650;
+    letter-spacing: -0.015em;
+    line-height: 1.3;
+    text-wrap: balance;
+    margin-bottom: 8px;
+  }
+
+  .panel-head p {
+    color: var(--ink-2);
+    max-width: 64ch;
+  }
+
+  .split {
+    display: grid;
+    grid-template-columns: minmax(0, 0.92fr) minmax(0, 1.08fr);
+    gap: 26px;
+    align-items: start;
+  }
+
+  @media (max-width: 900px) {
+    .split {
+      grid-template-columns: minmax(0, 1fr);
+    }
+  }
+
+  .card {
+    background: var(--card);
+    border: 1px solid var(--rule);
+    border-radius: var(--r);
+    padding: 20px;
+  }
+
+  .card + .card {
+    margin-top: 18px;
+  }
+
+  .card > h3 {
+    font-size: 13px;
+    font-weight: 650;
+    letter-spacing: 0.02em;
+    color: var(--ink-2);
+    margin-bottom: 14px;
+    padding-bottom: 10px;
+    border-bottom: 1px solid var(--rule);
+  }
+
+  /* ── 규칙 상자 ─────────────────────────── */
+
+  .rule-box {
+    border-left: 3px solid var(--warm);
+    background: var(--warm-soft);
+    padding: 14px 18px;
+    border-radius: 0 var(--r) var(--r) 0;
+    margin-bottom: 18px;
+  }
+
+  .rule-box strong {
+    font-weight: 650;
+  }
+
+  .rule-box p + p {
+    margin-top: 2px;
+  }
+
+  /* ── 표 ───────────────────────────────── */
+
+  .table-scroll {
+    overflow-x: auto;
+  }
+
+  table {
+    border-collapse: collapse;
+    width: 100%;
+    font-variant-numeric: tabular-nums;
+  }
+
+  th, td {
+    text-align: right;
+    padding: 7px 12px;
+    border-bottom: 1px solid var(--rule);
+    font-family: var(--font-mono);
+    font-size: 14px;
+    white-space: nowrap;
+  }
+
+  th {
+    font-family: var(--font-body);
+    font-size: 12.5px;
+    font-weight: 600;
+    color: var(--ink-2);
+    letter-spacing: 0.01em;
+    border-bottom-width: 1.5px;
+  }
+
+  tbody tr:last-child td {
+    border-bottom: 0;
+  }
+
+  td.dim {
+    color: var(--ink-3);
+  }
+
+  td.pen {
+    color: var(--pen);
+    font-weight: 600;
+  }
+
+  td.warm {
+    color: var(--warm);
+    font-weight: 600;
+  }
+
+  /* ── 표 안 입력칸 ──────────────────────── */
+
+  input.cell {
+    width: 62px;
+    text-align: right;
+    font-family: var(--font-mono);
+    font-size: 14px;
+    color: var(--ink);
+    background: transparent;
+    border: 1px solid var(--rule);
+    border-radius: var(--r);
+    padding: 3px 7px;
+  }
+
+  input.cell:focus-visible {
+    outline: 2px solid var(--pen);
+    outline-offset: 1px;
+  }
+
+  input.cell[data-state="ok"] {
+    border-color: var(--pen);
+    color: var(--pen);
+    font-weight: 600;
+    background: var(--pen-soft);
+  }
+
+  input.cell[data-state="bad"] {
+    border-color: var(--bad);
+    color: var(--bad);
+  }
+
+  .mark {
+    display: inline-block;
+    width: 1.2em;
+    font-family: var(--font-mono);
+    font-size: 13px;
+  }
+
+  .mark.ok { color: var(--pen); }
+  .mark.bad { color: var(--bad); }
+
+  /* ── 컨트롤 ───────────────────────────── */
+
+  .ctrl {
+    display: grid;
+    grid-template-columns: 74px minmax(0, 1fr) 54px;
+    align-items: center;
+    gap: 12px;
+  }
+
+  .ctrl + .ctrl {
+    margin-top: 11px;
+  }
+
+  .ctrl label {
+    font-size: 13.5px;
+    color: var(--ink-2);
+  }
+
+  .ctrl label b {
+    font-family: var(--font-mono);
+    color: var(--ink);
+    font-weight: 600;
+  }
+
+  .ctrl output {
+    font-family: var(--font-mono);
+    font-size: 14px;
+    text-align: right;
+    font-variant-numeric: tabular-nums;
+    color: var(--ink);
+  }
+
+  input[type="range"] {
+    appearance: none;
+    width: 100%;
+    height: 22px;
+    background: transparent;
+    cursor: pointer;
+  }
+
+  input[type="range"]::-webkit-slider-runnable-track {
+    height: 2px;
+    background: var(--rule);
+  }
+
+  input[type="range"]::-moz-range-track {
+    height: 2px;
+    background: var(--rule);
+  }
+
+  input[type="range"]::-webkit-slider-thumb {
+    appearance: none;
+    width: 15px;
+    height: 15px;
+    border-radius: 50%;
+    background: var(--pen);
+    margin-top: -6.5px;
+    border: 0;
+  }
+
+  input[type="range"]::-moz-range-thumb {
+    width: 15px;
+    height: 15px;
+    border-radius: 50%;
+    background: var(--pen);
+    border: 0;
+  }
+
+  input[type="range"]:focus-visible {
+    outline: 2px solid var(--pen);
+    outline-offset: 3px;
+  }
+
+  /* ── 버튼 ─────────────────────────────── */
+
+  .btn-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-top: 16px;
+  }
+
+  button.btn {
+    appearance: none;
+    font-family: var(--font-body);
+    font-size: 13.5px;
+    font-weight: 550;
+    color: var(--ink);
+    background: var(--card);
+    border: 1px solid var(--rule);
+    border-radius: var(--r);
+    padding: 7px 13px;
+    cursor: pointer;
+  }
+
+  button.btn:hover {
+    border-color: var(--ink-3);
+  }
+
+  button.btn:focus-visible {
+    outline: 2px solid var(--pen);
+    outline-offset: 1px;
+  }
+
+  button.btn[aria-pressed="true"] {
+    background: var(--pen);
+    border-color: var(--pen);
+    color: #fff;
+  }
+
+  :root[data-theme="dark"] button.btn[aria-pressed="true"],
+  :root[data-theme="dark"] .swatch-pen {
+    color: #0E141A;
+  }
+
+  @media (prefers-color-scheme: dark) {
+    button.btn[aria-pressed="true"] { color: #0E141A; }
+  }
+
+  :root[data-theme="light"] button.btn[aria-pressed="true"] { color: #fff; }
+
+  .seg {
+    display: inline-flex;
+    gap: 0;
+    border: 1px solid var(--rule);
+    border-radius: var(--r);
+    overflow: hidden;
+  }
+
+  .seg button {
+    appearance: none;
+    border: 0;
+    border-right: 1px solid var(--rule);
+    background: var(--card);
+    color: var(--ink-2);
+    font-family: var(--font-body);
+    font-size: 13px;
+    font-weight: 550;
+    padding: 7px 13px;
+    cursor: pointer;
+  }
+
+  .seg button:last-child { border-right: 0; }
+
+  .seg button[aria-pressed="true"] {
+    background: var(--pen);
+    color: #fff;
+  }
+
+  :root[data-theme="dark"] .seg button[aria-pressed="true"] { color: #0E141A; }
+  @media (prefers-color-scheme: dark) {
+    .seg button[aria-pressed="true"] { color: #0E141A; }
+  }
+  :root[data-theme="light"] .seg button[aria-pressed="true"] { color: #fff; }
+
+  .seg button:focus-visible {
+    outline: 2px solid var(--pen);
+    outline-offset: -2px;
+  }
+
+  /* ── 그래프 ───────────────────────────── */
+
+  .plot-box {
+    background: var(--card);
+    border: 1px solid var(--rule);
+    border-radius: var(--r);
+    padding: 14px;
+  }
+
+  canvas {
+    display: block;
+    width: 100%;
+    aspect-ratio: 4 / 3;
+  }
+
+  .legend {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px 18px;
+    margin-top: 12px;
+    padding-top: 12px;
+    border-top: 1px solid var(--rule);
+    font-size: 12.5px;
+    color: var(--ink-2);
+  }
+
+  .legend span {
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+  }
+
+  .key {
+    width: 20px;
+    height: 0;
+    border-top-width: 2.5px;
+    border-top-style: solid;
+    flex: 0 0 auto;
+  }
+
+  .key.pen { border-color: var(--pen); }
+  .key.dash { border-color: var(--dash); border-top-style: dashed; }
+  .key.thin { border-color: var(--pen); opacity: 0.4; border-top-width: 1.5px; }
+
+  .key.fill {
+    height: 11px;
+    border: 0;
+    background: var(--warm-soft);
+    border-left: 2px solid var(--warm);
+  }
+
+  /* ── 메모 / 요약 ──────────────────────── */
+
+  .note {
+    font-size: 14px;
+    color: var(--ink-2);
+    margin-top: 14px;
+  }
+
+  .note b { color: var(--ink); font-weight: 600; }
+
+  .verdict {
+    margin-top: 18px;
+    padding: 15px 18px;
+    border-left: 3px solid var(--pen);
+    background: var(--pen-soft);
+    border-radius: 0 var(--r) var(--r) 0;
+    font-size: 15px;
+  }
+
+  .verdict[hidden] { display: none; }
+
+  details.memo {
+    margin-top: 28px;
+    border-top: 1px solid var(--rule);
+    padding-top: 16px;
+  }
+
+  details.memo summary {
+    cursor: pointer;
+    font-family: var(--font-mono);
+    font-size: 11.5px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--ink-3);
+    list-style: none;
+  }
+
+  details.memo summary::-webkit-details-marker { display: none; }
+
+  details.memo summary::before {
+    content: "▸ ";
+  }
+
+  details.memo[open] summary::before {
+    content: "▾ ";
+  }
+
+  details.memo ul {
+    margin: 14px 0 0 0;
+    padding-left: 20px;
+    font-size: 14.5px;
+    color: var(--ink-2);
+  }
+
+  details.memo li + li { margin-top: 7px; }
+
+  details.memo b { color: var(--ink); font-weight: 600; }
+
+  .flow {
+    font-family: var(--font-mono);
+    font-size: 13px;
+    color: var(--ink-2);
+    background: var(--paper);
+    border: 1px solid var(--rule);
+    border-radius: var(--r);
+    padding: 12px 14px;
+    margin-bottom: 16px;
+    overflow-x: auto;
+    white-space: nowrap;
+  }
+
+  .flow em {
+    font-style: normal;
+    color: var(--warm);
+    font-weight: 600;
+  }
+
+  .flow i {
+    font-style: normal;
+    color: var(--pen);
+    font-weight: 600;
+  }
+
+  .line-row {
+    display: grid;
+    grid-template-columns: 26px repeat(3, minmax(0, 1fr));
+    gap: 10px;
+    align-items: center;
+    padding: 10px 0;
+    border-bottom: 1px solid var(--rule);
+  }
+
+  .line-row:last-of-type { border-bottom: 0; }
+
+  .line-row .tag {
+    font-family: var(--font-mono);
+    font-size: 12px;
+    color: var(--ink-2);
+  }
+
+  .line-row .mini {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+  }
+
+  .line-row .mini span {
+    font-size: 11px;
+    color: var(--ink-3);
+    font-family: var(--font-mono);
+    display: flex;
+    justify-content: space-between;
+  }
+
+  .line-row.off { opacity: 0.38; }
+
+  .col-head {
+    display: grid;
+    grid-template-columns: 26px repeat(3, minmax(0, 1fr));
+    gap: 10px;
+    font-size: 11.5px;
+    color: var(--ink-3);
+    padding-bottom: 8px;
+    border-bottom: 1.5px solid var(--rule);
+  }
+
+  .two-tables {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 18px;
+  }
+
+  footer.foot {
+    margin-top: 56px;
+    padding-top: 20px;
+    border-top: 1px solid var(--rule);
+    font-size: 13px;
+    color: var(--ink-3);
+  }
+
+  @media (prefers-reduced-motion: no-preference) {
+    input.cell { transition: border-color .12s, background .12s; }
+  }
+</style>
+<style>
+  /* ── 인쇄 · PDF 저장 ──────────────────── */
+
+  .print-bar {
+    display: flex;
+    justify-content: flex-end;
+    gap: 8px;
+    margin-top: 14px;
+  }
+
+  .print-bar button {
+    appearance: none;
+    font-family: var(--font-body);
+    font-size: 12.5px;
+    font-weight: 550;
+    color: var(--ink-2);
+    background: none;
+    border: 1px solid var(--rule);
+    border-radius: var(--r);
+    padding: 5px 11px;
+    cursor: pointer;
+  }
+  .print-bar button:hover { color: var(--ink); border-color: var(--ink-3); }
+
+  body.flat nav.steps { display: none; }
+  body.flat section.panel { display: block !important; }
+  body.flat section.panel + section.panel {
+    margin-top: 46px;
+    padding-top: 34px;
+    border-top: 1px solid var(--rule);
+  }
+
+  @media print {
+    @page { size: A4 portrait; margin: 13mm 11mm; }
+
+    :root {
+      --paper: #fff;
+      --card: #fff;
+      --ink: #14181c;
+      --ink-2: #3d4750;
+      --ink-3: #6b7680;
+      --rule: #c8d0d8;
+      --grid: #e6ebf0;
+      --pen: #0A5AA8;
+      --warm: #A84A12;
+    }
+
+    * { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+
+    body { background: #fff; font-size: 11.5px; }
+    .wrap { max-width: none; padding: 0; }
+
+    nav.steps, .print-bar, .btn-row { display: none !important; }
+    input[type="range"] { display: none !important; }
+    .ctrl { grid-template-columns: 92px 1fr; }
+    .ctrl output { text-align: left; }
+
+    header.top { padding: 0 0 18px; break-after: avoid; }
+    h1 { font-size: 25px; }
+
+    section.panel { display: block !important; break-before: page; }
+    section.panel:first-of-type { break-before: auto; }
+    section.panel + section.panel { margin-top: 0; padding-top: 0; border-top: 0; }
+
+    .panel-head { break-after: avoid; }
+    .split { grid-template-columns: minmax(0, 1fr) !important; gap: 16px; }
+    .card, .plot-box, details.memo, .verdict, table { break-inside: avoid; }
+    .card + .card, .plot-box + .plot-box { margin-top: 14px; }
+
+    canvas { aspect-ratio: 16 / 9; max-height: 78mm; }
+
+    details.memo { margin-top: 20px; }
+    details.memo summary { color: var(--ink-2); }
+
+    footer.foot { break-inside: avoid; }
+  }
+</style>
+
+<style>
+  th small {
+    display: block;
+    font-weight: 400;
+    font-size: 10.5px;
+    color: var(--ink-3);
+    font-family: var(--font-mono);
+    letter-spacing: 0;
+  }
+
+  tfoot th { border-top: 1.5px solid var(--rule); border-bottom: 0; padding-top: 9px; }
+  tfoot th b { font-family: var(--font-mono); color: var(--ink); }
+
+  td.warm-cell { color: var(--warm); font-weight: 600; }
+  td.bad-cell { color: var(--bad); font-weight: 600; }
+
+  tr.now td { background: var(--pen-soft); }
+  tr.now td:first-child { box-shadow: inset 3px 0 0 var(--pen); }
+
+  .big {
+    margin-top: 16px;
+    padding-top: 14px;
+    border-top: 1px solid var(--rule);
+    display: flex;
+    align-items: baseline;
+    gap: 10px;
+    flex-wrap: wrap;
+  }
+  .big .v {
+    font-family: var(--font-mono);
+    font-size: clamp(24px, 3.4vw, 34px);
+    font-weight: 700;
+    color: var(--pen);
+    letter-spacing: -0.02em;
+    font-variant-numeric: tabular-nums;
+  }
+  .big .u { font-size: 13.5px; color: var(--ink-2); }
+
+  .key.cat { border-color: var(--pen); }
+  .key.dog { border-color: var(--warm); }
+  .key.bird { border-color: var(--ink-3); }
+
+  .swatch {
+    width: 11px;
+    height: 11px;
+    border-radius: 2px;
+    flex: 0 0 auto;
+  }
+  .swatch.cat { background: var(--pen); }
+  .swatch.dog { background: var(--warm); }
+  .swatch.bird { background: var(--ink-3); }
+</style>
+<div class="wrap">
+
+  <header class="top">
+    <div class="eyebrow">AI 세션 5회차 · 실습</div>
+    <h1>87%는 어디서 나온 숫자인가</h1>
+    <p class="lede">
+      자료 <b>3번부터 7번까지</b>를 화면에서 그대로 따라가는 페이지입니다.
+      고양이 <b>3.2</b> · 개 <b>1.1</b> · 새 <b>−0.5</b> — 자료에 나온 그 점수로 시작합니다.
+    </p>
+  </header>
+
+  <nav class="steps" role="tablist" aria-label="실습 단계">
+    <button role="tab" aria-selected="true" data-step="1"><span class="n">3</span>순진한 방법</button>
+    <button role="tab" aria-selected="false" data-step="2"><span class="n">4</span>두 단계로</button>
+    <button role="tab" aria-selected="false" data-step="3"><span class="n">6</span>3점 차이가 95%</button>
+    <button role="tab" aria-selected="false" data-step="4"><span class="n">7</span>모른다고 못 함</button>
+  </nav>
+
+  <!-- ══ 1 ══════════════════════════════════ -->
+  <section class="panel" data-panel="1">
+    <div class="panel-head">
+      <h2>전부 더한 값으로 각자를 나누면 되지 않나요</h2>
+      <p>
+        가장 먼저 떠오르는 방법입니다. 해봅시다 — 점수를 움직여보세요.
+        어디서 깨지는지 금방 보입니다.
+      </p>
+    </div>
+
+    <div class="split">
+      <div>
+        <div class="card">
+          <h3>모델이 뱉은 점수</h3>
+          <div class="ctrl">
+            <label for="n0"><b>고양이</b></label>
+            <input type="range" id="n0" min="-4" max="8" step="0.1" value="3.2">
+            <output id="n0-out">3.2</output>
+          </div>
+          <div class="ctrl">
+            <label for="n1"><b>개</b></label>
+            <input type="range" id="n1" min="-4" max="8" step="0.1" value="1.1">
+            <output id="n1-out">1.1</output>
+          </div>
+          <div class="ctrl">
+            <label for="n2"><b>새</b></label>
+            <input type="range" id="n2" min="-4" max="8" step="0.1" value="-0.5">
+            <output id="n2-out">-0.5</output>
+          </div>
+
+          <p class="note">
+            이 점수는 마지막 층이 뱉은 <b>w·x + b</b> 계산 결과입니다.
+            그래서 <b>음수도 나옵니다.</b>
+          </p>
+        </div>
+
+        <div class="card">
+          <h3>합으로 그냥 나눠보면</h3>
+          <div class="table-scroll">
+            <table>
+              <thead>
+                <tr>
+                  <th style="text-align:left">후보</th>
+                  <th>점수</th>
+                  <th id="naive-head">합으로 나누면</th>
+                </tr>
+              </thead>
+              <tbody id="t-naive"></tbody>
+            </table>
+          </div>
+          <div class="verdict" id="naive-verdict"></div>
+        </div>
+      </div>
+
+      <div class="plot-box">
+        <canvas id="c1" aria-label="합으로 나눈 결과"></canvas>
+        <div class="legend">
+          <span><i class="swatch cat"></i>고양이</span>
+          <span><i class="swatch dog"></i>개</span>
+          <span><i class="swatch bird"></i>새</span>
+        </div>
+      </div>
+    </div>
+
+    <details class="memo">
+      <summary>진행자 메모</summary>
+      <ul>
+        <li><b>자료 값 그대로 두고 먼저 표를 읽으세요.</b> 새가 −13%라는 게 눈에 들어와야 합니다.
+          슬라이더는 그다음입니다.</li>
+        <li><b>새를 0 위로 올려보세요.</b> 음수가 사라지면 멀쩡해 보입니다 — 그래서 더 나쁩니다.
+          “가끔 되는 방법”은 쓸 수 없다는 얘기로 넘기면 됩니다.</li>
+        <li>점수 합이 <b>0 근처</b>가 되게 맞춰보는 것도 한 번 해보세요. 나눗셈이 폭발합니다.</li>
+      </ul>
+    </details>
+  </section>
+
+  <!-- ══ 2 ══════════════════════════════════ -->
+  <section class="panel" data-panel="2" hidden>
+    <div class="panel-head">
+      <h2>음수를 없앤 다음에 나눕니다</h2>
+      <p>
+        1단계 — 지수를 통과시켜 <b>전부 양수로</b> 만듭니다.
+        2단계 — <b>그러고 나서 합으로 나눕니다.</b>
+        ①번 칸은 채워뒀습니다. <b>②번 칸을 직접 채워보세요.</b>
+      </p>
+    </div>
+
+    <div class="split">
+      <div>
+        <div class="card">
+          <h3>직접 채우기 — 자료 4번</h3>
+          <div class="table-scroll">
+            <table>
+              <thead>
+                <tr>
+                  <th style="text-align:left">후보</th>
+                  <th>점수</th>
+                  <th>① 지수 통과</th>
+                  <th>② 합으로 나누기</th>
+                </tr>
+              </thead>
+              <tbody id="t-soft"></tbody>
+              <tfoot>
+                <tr>
+                  <th style="text-align:left" colspan="2">합</th>
+                  <th style="text-align:right">28.1</th>
+                  <th id="soft-sum" style="text-align:right">—</th>
+                </tr>
+              </tfoot>
+            </table>
+          </div>
+
+          <div class="btn-row">
+            <button class="btn" id="soft-reveal">답 보기</button>
+            <button class="btn" id="soft-reset">다시</button>
+          </div>
+
+          <p class="note">
+            소수 두 자리로 적으세요 — <b>0.87</b> 처럼요. 백분율로 적어도 맞게 처리합니다.
+          </p>
+        </div>
+
+        <div class="card">
+          <h3>지수가 하는 일</h3>
+          <p class="note" style="margin-top:0">
+            <b>성질 1.</b> 결과가 절대 음수가 안 됩니다. e<sup>−0.5</sup> ≈ 0.61,
+            e<sup>−10</sup> ≈ 0.00005. 작아지긴 해도 음수가 되진 않습니다.<br>
+            <b>성질 2.</b> 큰 값은 훨씬 더 크게 벌어집니다. e<sup>1</sup> ≈ 2.7 인데
+            e<sup>3</sup> ≈ 20. 원래 차이는 2였는데 결과는 7배 넘게 벌어졌습니다.
+          </p>
+          <p class="note">
+            성질 1이 지금 문제를 풀어줍니다. <b>성질 2는 3번에서 중요해집니다.</b>
+          </p>
+        </div>
+      </div>
+
+      <div class="plot-box">
+        <canvas id="c2" aria-label="점수와 지수 통과 후의 비교"></canvas>
+        <div class="legend">
+          <span><i class="key thin"></i>원래 점수</span>
+          <span><i class="key pen"></i>지수를 통과한 뒤</span>
+        </div>
+        <p class="note" style="padding:0 2px">
+          점수 차이는 <b>2.1</b> 이었는데, 지수를 통과하니 <b>24.5 대 3.0</b> 으로 벌어졌습니다.
+        </p>
+      </div>
+    </div>
+
+    <details class="memo">
+      <summary>진행자 메모</summary>
+      <ul>
+        <li><b>계산기를 쓰게 하세요.</b> 24.5 ÷ 28.1 을 암산시키면 여기서 5분이 날아갑니다.</li>
+        <li>세 칸을 다 채우면 <b>합이 100%</b> 라는 게 아래 줄에 뜹니다. 그걸 확인하는 게 이 표의 목적입니다.</li>
+        <li>“왜 하필 e 냐”는 질문이 나오면 <b>“성질 두 개만 만족하면 되고, e가 계산이 편해서”</b> 로 넘기세요.
+          여기서 자연로그를 시작하면 회차가 무너집니다.</li>
+      </ul>
+    </details>
+  </section>
+
+  <!-- ══ 3 ══════════════════════════════════ -->
+  <section class="panel" data-panel="3" hidden>
+    <div class="panel-head">
+      <h2>고작 3점 앞섰는데 95%입니다</h2>
+      <p>
+        후보가 둘일 때, <b>1등과 2등의 점수 차이</b>만 움직여봅시다.
+        모델 입장에서 3점 차이는 큰 게 아닙니다. 그런데 우리 눈에는 “95% 확신”으로 보입니다.
+      </p>
+    </div>
+
+    <div class="split">
+      <div>
+        <div class="card">
+          <h3>점수 차이</h3>
+          <div class="ctrl">
+            <label for="dd"><b>차이</b></label>
+            <input type="range" id="dd" min="0" max="6" step="0.1" value="3">
+            <output id="dd-out">3.0</output>
+          </div>
+
+          <div class="big">
+            <span class="v" id="d-p1">95%</span>
+            <span class="u">1등 · 2등은 <b id="d-p2">5%</b></span>
+          </div>
+
+          <p class="note" id="d-note"></p>
+        </div>
+
+        <div class="card">
+          <h3>자료 6번의 표</h3>
+          <div class="table-scroll">
+            <table>
+              <thead>
+                <tr>
+                  <th style="text-align:left">점수 차이</th>
+                  <th>1등 확률</th>
+                  <th>2등 확률</th>
+                </tr>
+              </thead>
+              <tbody id="t-diff"></tbody>
+            </table>
+          </div>
+          <div class="verdict">
+            <b>AI가 자신만만해 보이는 데는 이런 기계적인 이유가 있습니다.</b>
+            확신에 차 있어서가 아니라, 계산 방식이 작은 차이를 크게 벌려놓기 때문입니다.
+          </div>
+        </div>
+      </div>
+
+      <div class="plot-box">
+        <canvas id="c3" aria-label="점수 차이에 따른 1등 확률"></canvas>
+        <div class="legend">
+          <span><i class="key thin"></i>점수 차이 → 1등 확률</span>
+          <span><i class="key pen"></i>지금 여기</span>
+        </div>
+      </div>
+    </div>
+
+    <details class="memo">
+      <summary>진행자 메모</summary>
+      <ul>
+        <li><b>0에서 시작해서 천천히 올리세요.</b> 50%에서 출발해 1점 만에 73%가 되는 구간이
+          제일 놀랍습니다. 3점까지 가는 데 몇 초 안 걸립니다.</li>
+        <li>곡선이 <b>양 끝에서 납작해지는 것</b>도 짚어주세요. 5점이든 6점이든 99%라
+          <b>“얼마나 확신하는지”는 사실 뭉개져 있습니다.</b></li>
+        <li>여기서 <b>캘리브레이션</b> 얘기를 붙이면 좋습니다 — “90%라고 말한 것들만 모아보면
+          실제로 70%만 맞더라”. 기획할 때 기준선을 직접 재봐야 하는 이유입니다.</li>
+      </ul>
+    </details>
+  </section>
+
+  <!-- ══ 4 ══════════════════════════════════ -->
+  <section class="panel" data-panel="4" hidden>
+    <div class="panel-head">
+      <h2>모델에게는 “모르겠다”는 선택지가 없습니다</h2>
+      <p>
+        고양이·개·새 세 가지만 학습한 모델입니다. 여기에 <b>코끼리 사진</b>을 넣어보세요.
+        그리고 <b>점수를 전부 다 같이 내려보세요.</b>
+      </p>
+    </div>
+
+    <div class="split">
+      <div>
+        <div class="card">
+          <h3>점수 만들기</h3>
+          <div class="ctrl">
+            <label for="m0"><b>고양이</b></label>
+            <input type="range" id="m0" min="-4" max="8" step="0.1" value="3.2">
+            <output id="m0-out">3.2</output>
+          </div>
+          <div class="ctrl">
+            <label for="m1"><b>개</b></label>
+            <input type="range" id="m1" min="-4" max="8" step="0.1" value="1.1">
+            <output id="m1-out">1.1</output>
+          </div>
+          <div class="ctrl">
+            <label for="m2"><b>새</b></label>
+            <input type="range" id="m2" min="-4" max="8" step="0.1" value="-0.5">
+            <output id="m2-out">-0.5</output>
+          </div>
+
+          <div class="ctrl" style="margin-top:18px;padding-top:14px;border-top:1px solid var(--rule)">
+            <label for="moff"><b>셋 다 함께</b></label>
+            <input type="range" id="moff" min="-10" max="6" step="0.1" value="0">
+            <output id="moff-out">0.0</output>
+          </div>
+          <p class="note">
+            위 슬라이더는 <b>세 점수를 한꺼번에</b> 올리고 내립니다.
+            “자신 없다”를 표현해보려는 시도라고 생각하고 끝까지 내려보세요.
+          </p>
+
+          <div class="btn-row">
+            <div class="seg" role="group" aria-label="넣을 사진">
+              <button data-pic="3.2,1.1,-0.5" aria-pressed="true">고양이 사진</button>
+              <button data-pic="1.5,4.2,0.5" aria-pressed="false">코끼리 사진</button>
+            </div>
+          </div>
+        </div>
+
+        <div class="card">
+          <h3>Softmax 결과</h3>
+          <div class="table-scroll">
+            <table>
+              <thead>
+                <tr>
+                  <th style="text-align:left">후보</th>
+                  <th>점수</th>
+                  <th>확률</th>
+                </tr>
+              </thead>
+              <tbody id="t-ood"></tbody>
+              <tfoot>
+                <tr>
+                  <th style="text-align:left" colspan="2">합계</th>
+                  <th style="text-align:right">100%</th>
+                </tr>
+              </tfoot>
+            </table>
+          </div>
+          <div class="verdict" id="ood-verdict"></div>
+        </div>
+      </div>
+
+      <div class="plot-box">
+        <canvas id="c4" aria-label="합이 항상 100%인 막대"></canvas>
+        <div class="legend">
+          <span><i class="swatch cat"></i>고양이</span>
+          <span><i class="swatch dog"></i>개</span>
+          <span><i class="swatch bird"></i>새</span>
+        </div>
+        <p class="note" style="padding:0 2px">
+          막대는 <b>언제나 가득 찹니다.</b> Softmax는 합을 100%로 만드는 계산이라,
+          뭘 넣든 어딘가에 100%를 나눠줘야 합니다.
+        </p>
+      </div>
+    </div>
+
+    <details class="memo">
+      <summary>진행자 메모</summary>
+      <ul>
+        <li><b>“코끼리 사진”을 먼저 누르세요.</b> 개 92%가 뜹니다. “모델이 멍청해서가 아니라
+          애초에 모른다고 말할 방법이 없어서”가 이 화면의 한 문장입니다.</li>
+        <li>그다음 <b>“셋 다 함께”를 −10까지 끝까지 내리게 하세요.</b> 점수가 전부
+          바닥으로 내려가는데 <b>확률은 한 칸도 안 움직입니다.</b> 여기서 한 번 웅성거립니다.</li>
+        <li>이게 왜 중요하냐면 — <b>모델은 “자신 없음”을 표현할 자리가 구조적으로 없습니다.</b>
+          대응은 만드는 사람이 넣어야 합니다. “기타” 클래스를 두거나, 1등 확률이 기준 아래면 답을 막거나.</li>
+        <li>Teachable Machine 실습으로 넘어가는 다리입니다. <b>빈 벽을 보여줘도 막대가 안 사라지는 것</b>이
+          지금 본 것과 똑같은 일이에요.</li>
+      </ul>
+    </details>
+  </section>
+
+  <footer class="foot">
+    AI 세션 5회차 · <b>모델은 어떻게 답을 내놓는가</b> 실습용 · 자료 3 ~ 7번
+  </footer>
+</div>
+
+<script>
+(function () {
+  "use strict";
+
+  var css = function (name) {
+    return getComputedStyle(document.documentElement).getPropertyValue(name).trim();
+  };
+
+  var fmt = function (v, d) {
+    if (d === undefined) d = 1;
+    var s = v.toFixed(d);
+    if (s === "-0.0" || s === "-0" || s === "-0.00") s = s.replace("-", "");
+    return s;
+  };
+
+  /* ── 그래프 도구 ─────────────────────── */
+
+  function Plot(canvas, xmin, xmax, ymin, ymax) {
+    this.cv = canvas;
+    this.ctx = canvas.getContext("2d");
+    this.xmin = xmin; this.xmax = xmax;
+    this.ymin = ymin; this.ymax = ymax;
+    this.pad = 30;
+  }
+
+  Plot.prototype.sync = function () {
+    var dpr = window.devicePixelRatio || 1;
+    var w = this.cv.clientWidth;
+    var h = this.cv.clientHeight;
+    if (!w || !h) return false;
+    if (this.cv.width !== Math.round(w * dpr)) {
+      this.cv.width = Math.round(w * dpr);
+      this.cv.height = Math.round(h * dpr);
+    }
+    this.ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    this.w = w; this.h = h;
+    return true;
+  };
+
+  Plot.prototype.px = function (x) {
+    return this.pad + (x - this.xmin) / (this.xmax - this.xmin) * (this.w - this.pad * 2);
+  };
+
+  Plot.prototype.py = function (y) {
+    return this.h - this.pad - (y - this.ymin) / (this.ymax - this.ymin) * (this.h - this.pad * 2);
+  };
+
+  Plot.prototype.clip = function () {
+    var c = this.ctx;
+    c.beginPath();
+    c.rect(this.pad, this.pad, this.w - this.pad * 2, this.h - this.pad * 2);
+    c.clip();
+  };
+
+  Plot.prototype.grid = function (stepX, stepY) {
+    var c = this.ctx, i;
+    c.clearRect(0, 0, this.w, this.h);
+    c.lineWidth = 1;
+    c.strokeStyle = css("--grid");
+    c.beginPath();
+    for (i = Math.ceil(this.xmin / stepX) * stepX; i <= this.xmax + 1e-9; i += stepX) {
+      c.moveTo(Math.round(this.px(i)) + 0.5, this.py(this.ymin));
+      c.lineTo(Math.round(this.px(i)) + 0.5, this.py(this.ymax));
+    }
+    for (i = Math.ceil(this.ymin / stepY) * stepY; i <= this.ymax + 1e-9; i += stepY) {
+      c.moveTo(this.px(this.xmin), Math.round(this.py(i)) + 0.5);
+      c.lineTo(this.px(this.xmax), Math.round(this.py(i)) + 0.5);
+    }
+    c.stroke();
+  };
+
+  Plot.prototype.axes = function (labelStep) {
+    var c = this.ctx, i;
+    c.lineWidth = 1.5;
+    c.strokeStyle = css("--ink-3");
+    c.beginPath();
+    c.moveTo(this.px(this.xmin), Math.round(this.py(0)) + 0.5);
+    c.lineTo(this.px(this.xmax), Math.round(this.py(0)) + 0.5);
+    c.moveTo(Math.round(this.px(0)) + 0.5, this.py(this.ymin));
+    c.lineTo(Math.round(this.px(0)) + 0.5, this.py(this.ymax));
+    c.stroke();
+
+    c.fillStyle = css("--ink-3");
+    c.font = "11px " + css("--font-mono");
+    c.textAlign = "center";
+    c.textBaseline = "top";
+    for (i = Math.ceil(this.xmin / labelStep) * labelStep; i <= this.xmax - 1e-9; i += labelStep) {
+      if (Math.abs(i) < 1e-9) continue;
+      c.fillText(String(Math.round(i)), this.px(i), this.py(0) + 6);
+    }
+    c.textAlign = "right";
+    c.textBaseline = "middle";
+    for (i = Math.ceil(this.ymin / labelStep) * labelStep; i <= this.ymax - 1e-9; i += labelStep) {
+      if (Math.abs(i) < 1e-9) continue;
+      c.fillText(String(Math.round(i)), this.px(0) - 7, this.py(i));
+    }
+  };
+
+  Plot.prototype.curve = function (fn, opt) {
+    var c = this.ctx, x, first = true, y;
+    c.save();
+    this.clip();
+    c.lineWidth = opt.width || 2;
+    c.strokeStyle = opt.color;
+    c.globalAlpha = opt.alpha === undefined ? 1 : opt.alpha;
+    c.setLineDash(opt.dash || []);
+    c.lineJoin = "round";
+    c.lineCap = "round";
+    c.beginPath();
+    for (x = this.xmin; x <= this.xmax + 1e-9; x += (this.xmax - this.xmin) / 480) {
+      y = fn(x);
+      if (!isFinite(y)) { first = true; continue; }
+      if (first) { c.moveTo(this.px(x), this.py(y)); first = false; }
+      else c.lineTo(this.px(x), this.py(y));
+    }
+    c.stroke();
+    c.restore();
+  };
+
+  Plot.prototype.band = function (x0, x1) {
+    var c = this.ctx;
+    if (x1 <= x0) return;
+    c.save();
+    this.clip();
+    c.fillStyle = css("--warm-soft");
+    c.fillRect(this.px(x0), this.py(this.ymax), this.px(x1) - this.px(x0),
+               this.py(this.ymin) - this.py(this.ymax));
+    c.strokeStyle = css("--warm");
+    c.lineWidth = 1.5;
+    c.setLineDash([3, 3]);
+    c.beginPath();
+    c.moveTo(Math.round(this.px(x1)) + 0.5, this.py(this.ymin));
+    c.lineTo(Math.round(this.px(x1)) + 0.5, this.py(this.ymax));
+    c.stroke();
+    c.restore();
+  };
+
+  Plot.prototype.dot = function (x, y, color, r) {
+    var c = this.ctx;
+    c.save();
+    this.clip();
+    c.fillStyle = color;
+    c.beginPath();
+    c.arc(this.px(x), this.py(y), r || 4.5, 0, Math.PI * 2);
+    c.fill();
+    c.restore();
+  };
+
+  Plot.prototype.tag = function (x, y, text, color, dy) {
+    var c = this.ctx;
+    c.save();
+    c.fillStyle = color;
+    c.font = "600 12px " + css("--font-body");
+    c.textAlign = "center";
+    c.textBaseline = "bottom";
+    c.fillText(text, this.px(x), this.py(y) + (dy || -10));
+    c.restore();
+  };
+
+  var plots = [];
+  function register(p, draw) {
+    p.draw = function () { if (p.sync()) draw(p); };
+    plots.push(p);
+    return p;
+  }
+  function redrawAll() {
+    for (var i = 0; i < plots.length; i++) plots[i].draw();
+  }
+
+  /* ── 스텝 전환 ───────────────────────── */
+
+  var tabs = document.querySelectorAll("nav.steps button");
+  var panels = document.querySelectorAll("section.panel");
+
+  Array.prototype.forEach.call(tabs, function (t) {
+    t.addEventListener("click", function () {
+      Array.prototype.forEach.call(tabs, function (o) {
+        o.setAttribute("aria-selected", o === t ? "true" : "false");
+      });
+      Array.prototype.forEach.call(panels, function (p) {
+        p.hidden = p.getAttribute("data-panel") !== t.getAttribute("data-step");
+      });
+      redrawAll();
+      window.scrollTo({ top: 0, behavior: "instant" });
+    });
+  });
+
+    var NAMES = ["고양이", "개", "새"];
+  var KEYS = ["cat", "dog", "bird"];
+
+  function colorOf(i) {
+    return [css("--pen"), css("--warm"), css("--ink-3")][i];
+  }
+
+  function softmax(z) {
+    var m = Math.max.apply(null, z);
+    var e = z.map(function (v) { return Math.exp(v - m); });
+    var s = e.reduce(function (a, b) { return a + b; }, 0);
+    return e.map(function (v) { return v / s; });
+  }
+
+  function td(text, cls, align) {
+    return "<td" + (cls ? ' class="' + cls + '"' : "")
+      + (align ? ' style="text-align:' + align + '"' : "") + ">" + text + "</td>";
+  }
+
+  function pct(v) { return Math.round(v * 100) + "%"; }
+
+  /* 세 후보를 가로 막대 하나에 쌓아 그립니다 */
+  function stack(p, parts, caption) {
+    var c = p.ctx;
+    c.clearRect(0, 0, p.w, p.h);
+    var x0 = 26, x1 = p.w - 26, W = x1 - x0;
+    var y = p.h * 0.42, H = 58;
+    var acc = 0;
+
+    parts.forEach(function (v, i) {
+      var w = W * v;
+      c.fillStyle = colorOf(i);
+      c.globalAlpha = i === 2 ? 0.55 : 1;
+      c.fillRect(x0 + acc, y, w, H);
+      c.globalAlpha = 1;
+      if (v > 0.07) {
+        c.fillStyle = i === 2 ? css("--ink") : "#fff";
+        c.font = "700 15px " + css("--font-body");
+        c.textAlign = "center";
+        c.textBaseline = "middle";
+        c.fillText(pct(v), x0 + acc + w / 2, y + H / 2);
+      }
+      acc += w;
+    });
+
+    c.strokeStyle = css("--rule");
+    c.lineWidth = 1;
+    c.strokeRect(x0 + 0.5, y + 0.5, W - 1, H - 1);
+
+    c.fillStyle = css("--ink-2");
+    c.font = "12.5px " + css("--font-body");
+    c.textAlign = "center";
+    c.textBaseline = "top";
+    c.fillText(caption, p.w / 2, y + H + 16);
+
+    c.fillStyle = css("--ink-3");
+    c.font = "11px " + css("--font-mono");
+    c.textBaseline = "bottom";
+    c.fillText("합 100%", p.w / 2, y - 10);
+  }
+
+  /* ══ 1. 순진한 방법 ═════════════════════ */
+
+  var naive = [3.2, 1.1, -0.5];
+
+  function renderNaive() {
+    var sum = naive.reduce(function (a, b) { return a + b; }, 0);
+    var html = "", i, bad = false, blow = Math.abs(sum) < 0.4;
+
+    for (i = 0; i < 3; i++) {
+      var q = naive[i] / sum;
+      if (q < 0) bad = true;
+      html += "<tr>"
+        + td(NAMES[i], "", "left")
+        + td(fmt(naive[i], 1), "dim")
+        + td(blow ? "—" : fmt(q, 2), q < 0 ? "bad-cell" : "")
+        + "</tr>";
+    }
+    document.getElementById("t-naive").innerHTML = html;
+    document.getElementById("naive-head").innerHTML =
+      "합(" + fmt(sum, 1) + ")으로 나누면";
+
+    var v = document.getElementById("naive-verdict");
+    if (blow) {
+      v.innerHTML = "점수 합이 <b>0 근처</b>가 됐습니다. 0으로 나눌 수는 없으니 "
+        + "계산 자체가 무너집니다.";
+    } else if (bad) {
+      v.innerHTML = "합치면 1이 되긴 합니다. 그런데 <b>확률이 음수</b>로 나왔습니다. "
+        + "확률이 음수일 수는 없죠. <b>점수에 음수가 섞여 있는 게 문제</b>입니다.";
+    } else {
+      v.innerHTML = "지금은 음수가 없어서 멀쩡해 보입니다. 그런데 "
+        + "<b>점수 하나만 0 아래로 내려도 바로 깨집니다.</b> 가끔 되는 방법은 쓸 수 없습니다.";
+    }
+    p1.draw();
+  }
+
+  [0, 1, 2].forEach(function (i) {
+    document.getElementById("n" + i).addEventListener("input", function () {
+      naive[i] = parseFloat(this.value);
+      document.getElementById("n" + i + "-out").textContent = fmt(naive[i], 1);
+      renderNaive();
+    });
+  });
+
+  var p1 = register(new Plot(document.getElementById("c1"), 0, 1, 0, 1), function (p) {
+    var c = p.ctx;
+    c.clearRect(0, 0, p.w, p.h);
+    var sum = naive.reduce(function (a, b) { return a + b; }, 0);
+    var qs = naive.map(function (v) { return Math.abs(sum) < 0.4 ? 0 : v / sum; });
+
+    var top = 34, bot = p.h - 48, H = bot - top;
+    var hi = 1.2, lo = -0.6;
+    var zero = top + H * (hi / (hi - lo));
+    var slot = (p.w - 60) / 3;
+    var bw = Math.min(70, slot * 0.5);
+
+    c.strokeStyle = css("--rule");
+    c.setLineDash([3, 3]);
+    c.lineWidth = 1;
+    c.beginPath();
+    [1, 0.5, 0, -0.5].forEach(function (v) {
+      var yy = top + H * ((hi - v) / (hi - lo));
+      c.moveTo(44, Math.round(yy) + 0.5);
+      c.lineTo(p.w - 14, Math.round(yy) + 0.5);
+    });
+    c.stroke();
+    c.setLineDash([]);
+
+    c.fillStyle = css("--ink-3");
+    c.font = "11px " + css("--font-mono");
+    c.textAlign = "right";
+    c.textBaseline = "middle";
+    [1, 0.5, 0, -0.5].forEach(function (v) {
+      c.fillText(pct(v), 40, top + H * ((hi - v) / (hi - lo)));
+    });
+
+    c.strokeStyle = css("--ink-3");
+    c.lineWidth = 1.5;
+    c.beginPath();
+    c.moveTo(44, Math.round(zero) + 0.5);
+    c.lineTo(p.w - 14, Math.round(zero) + 0.5);
+    c.stroke();
+
+    qs.forEach(function (v, i) {
+      var cx = 48 + slot * (i + 0.5);
+      var yv = top + H * ((hi - Math.max(Math.min(v, hi), lo)) / (hi - lo));
+      c.fillStyle = colorOf(i);
+      c.globalAlpha = v < 0 ? 1 : 0.85;
+      c.fillRect(cx - bw / 2, Math.min(zero, yv), bw, Math.max(1, Math.abs(zero - yv)));
+      c.globalAlpha = 1;
+
+      c.fillStyle = v < 0 ? css("--bad") : css("--ink");
+      c.font = "700 13px " + css("--font-mono");
+      c.textAlign = "center";
+      c.textBaseline = v < 0 ? "top" : "bottom";
+      c.fillText(pct(v), cx, v < 0 ? yv + 5 : yv - 6);
+
+      c.fillStyle = css("--ink-2");
+      c.font = "12.5px " + css("--font-body");
+      c.textBaseline = "top";
+      c.fillText(NAMES[i], cx, bot + 14);
+    });
+  });
+
+  /* ══ 2. 두 단계로 ═══════════════════════ */
+
+  var Z2 = [3.2, 1.1, -0.5];
+  var EXP2 = [24.5, 3.0, 0.6];          /* 자료 4번에 적힌 반올림 값 그대로 */
+  var SUM2 = 28.1;
+  var ANS2 = [0.87, 0.11, 0.02];
+  var got2 = [null, null, null];
+
+  function buildSoft() {
+    var html = "", i;
+    for (i = 0; i < 3; i++) {
+      html += "<tr>"
+        + td(NAMES[i], "", "left")
+        + td(fmt(Z2[i], 1), "dim")
+        + td(fmt(EXP2[i], 1), "pen")
+        + '<td><input class="cell" id="q' + i + '" inputmode="decimal" aria-label="'
+          + NAMES[i] + ' 확률"><span class="mark" id="qm' + i + '"></span></td>'
+        + "</tr>";
+    }
+    document.getElementById("t-soft").innerHTML = html;
+
+    [0, 1, 2].forEach(function (i) {
+      var inp = document.getElementById("q" + i), mk = document.getElementById("qm" + i);
+      inp.addEventListener("input", function () {
+        var t = inp.value.trim().replace("%", "");
+        var v = parseFloat(t);
+        if (t === "") {
+          inp.removeAttribute("data-state"); mk.textContent = ""; got2[i] = null;
+        } else {
+          if (isFinite(v) && v > 1) v = v / 100;      /* 87 로 적어도 받아줍니다 */
+          if (isFinite(v) && Math.abs(v - ANS2[i]) < 0.011) {
+            inp.setAttribute("data-state", "ok"); mk.textContent = "✓"; got2[i] = ANS2[i];
+          } else {
+            inp.setAttribute("data-state", "bad"); mk.textContent = ""; got2[i] = null;
+          }
+        }
+        renderSoftSum();
+      });
+    });
+  }
+
+  function renderSoftSum() {
+    var ok = got2.every(function (g) { return g !== null; });
+    document.getElementById("soft-sum").textContent = ok ? "100%" : "—";
+  }
+
+  document.getElementById("soft-reveal").addEventListener("click", function () {
+    [0, 1, 2].forEach(function (i) {
+      var inp = document.getElementById("q" + i);
+      inp.value = fmt(ANS2[i], 2);
+      inp.setAttribute("data-state", "ok");
+      document.getElementById("qm" + i).textContent = "✓";
+      got2[i] = ANS2[i];
+    });
+    renderSoftSum();
+  });
+
+  document.getElementById("soft-reset").addEventListener("click", function () {
+    [0, 1, 2].forEach(function (i) {
+      var inp = document.getElementById("q" + i);
+      inp.value = "";
+      inp.removeAttribute("data-state");
+      document.getElementById("qm" + i).textContent = "";
+      got2[i] = null;
+    });
+    renderSoftSum();
+  });
+
+  var p2 = register(new Plot(document.getElementById("c2"), 0, 1, 0, 1), function (p) {
+    var c = p.ctx;
+    c.clearRect(0, 0, p.w, p.h);
+    var top = 40, bot = p.h - 46, H = bot - top;
+    var slot = (p.w - 56) / 3;
+    var bw = Math.min(30, slot * 0.24);
+    var maxE = 26, maxZ = 4;
+
+    c.fillStyle = css("--ink-2");
+    c.font = "600 12.5px " + css("--font-body");
+    c.textAlign = "center";
+    c.textBaseline = "top";
+    c.fillText("점수 → 지수를 통과한 값", p.w / 2, 12);
+
+    [0, 1, 2].forEach(function (i) {
+      var cx = 40 + slot * (i + 0.5);
+      var hz = H * (Math.max(0, Z2[i]) / maxZ) * 0.45;
+      var he = H * (EXP2[i] / maxE);
+
+      c.fillStyle = colorOf(i);
+      c.globalAlpha = 0.3;
+      c.fillRect(cx - bw - 4, bot - hz, bw, Math.max(1, hz));
+      c.globalAlpha = 1;
+      c.fillRect(cx + 4, bot - he, bw, Math.max(1, he));
+
+      c.fillStyle = css("--ink-3");
+      c.font = "11.5px " + css("--font-mono");
+      c.textBaseline = "bottom";
+      c.fillText(fmt(Z2[i], 1), cx - bw / 2 - 4, bot - hz - 5);
+      c.fillStyle = css("--ink");
+      c.font = "700 12.5px " + css("--font-mono");
+      c.fillText(fmt(EXP2[i], 1), cx + bw / 2 + 4, bot - he - 5);
+
+      c.fillStyle = css("--ink-2");
+      c.font = "12.5px " + css("--font-body");
+      c.textBaseline = "top";
+      c.fillText(NAMES[i], cx, bot + 12);
+    });
+
+    c.strokeStyle = css("--ink-3");
+    c.lineWidth = 1.5;
+    c.beginPath();
+    c.moveTo(24, Math.round(bot) + 0.5);
+    c.lineTo(p.w - 14, Math.round(bot) + 0.5);
+    c.stroke();
+  });
+
+  /* ══ 3. 점수 차이 ═══════════════════════ */
+
+  var DIFFS = [0, 1, 2, 3, 5];
+  var s3 = { d: 3 };
+
+  function p1of(d) { return 1 / (1 + Math.exp(-d)); }
+
+  function renderDiff() {
+    var p = p1of(s3.d);
+    document.getElementById("dd-out").textContent = fmt(s3.d, 1);
+    document.getElementById("d-p1").textContent = pct(p);
+    document.getElementById("d-p2").textContent = pct(1 - p);
+
+    var note;
+    if (s3.d < 0.05) note = "동점이면 <b>반반</b>입니다. 여기서 조금만 올려보세요.";
+    else if (s3.d < 1.5) note = "<b>1점</b> 앞섰을 뿐인데 벌써 73%입니다.";
+    else if (s3.d < 3.5) note = "모델 입장에서 <b>3점 차이는 큰 게 아닙니다.</b> "
+      + "그런데 우리 눈에는 “95% 확신”으로 보입니다.";
+    else note = "여기서부터는 <b>곡선이 납작합니다.</b> 5점이든 6점이든 99%라, "
+      + "얼마나 확신하는지는 사실 뭉개져 있습니다.";
+    document.getElementById("d-note").innerHTML = note;
+
+    var html = "";
+    DIFFS.forEach(function (d) {
+      var q = p1of(d);
+      var now = Math.abs(d - s3.d) < 0.3;
+      html += '<tr' + (now ? ' class="now"' : "") + ">"
+        + td(d === 0 ? "0 (동점)" : String(d), "", "left")
+        + td(pct(q), "pen")
+        + td(pct(1 - q), "dim")
+        + "</tr>";
+    });
+    document.getElementById("t-diff").innerHTML = html;
+    p3.draw();
+  }
+
+  document.getElementById("dd").addEventListener("input", function () {
+    s3.d = parseFloat(this.value);
+    renderDiff();
+  });
+
+  var p3 = register(new Plot(document.getElementById("c3"), 0, 6, 0, 1), function (p) {
+    p.grid(1, 0.25);
+    var c = p.ctx, i;
+
+    c.strokeStyle = css("--ink-3");
+    c.lineWidth = 1.5;
+    c.beginPath();
+    c.moveTo(p.px(0), Math.round(p.py(0)) + 0.5);
+    c.lineTo(p.px(6), Math.round(p.py(0)) + 0.5);
+    c.moveTo(Math.round(p.px(0)) + 0.5, p.py(0));
+    c.lineTo(Math.round(p.px(0)) + 0.5, p.py(1));
+    c.stroke();
+
+    c.fillStyle = css("--ink-3");
+    c.font = "11px " + css("--font-mono");
+    c.textAlign = "center";
+    c.textBaseline = "top";
+    for (i = 1; i <= 6; i++) c.fillText(String(i), p.px(i), p.py(0) + 6);
+    c.textAlign = "right";
+    c.textBaseline = "middle";
+    [0.25, 0.5, 0.75, 1].forEach(function (v) {
+      c.fillText(pct(v), p.px(0) - 7, p.py(v));
+    });
+
+    p.curve(p1of, { color: css("--pen"), width: 2, alpha: 0.45 });
+
+    /* 50% 기준선 */
+    c.save();
+    p.clip();
+    c.strokeStyle = css("--dash");
+    c.setLineDash([4, 3]);
+    c.lineWidth = 1;
+    c.beginPath();
+    c.moveTo(p.px(0), p.py(0.5));
+    c.lineTo(p.px(6), p.py(0.5));
+    c.stroke();
+    c.restore();
+
+    p.dot(s3.d, p1of(s3.d), css("--pen"), 6);
+    p.tag(s3.d, p1of(s3.d), pct(p1of(s3.d)), css("--pen"), -12);
+    p.tag(3, 0, "점수 차이", css("--ink-3"), -6);
+  });
+
+  /* ══ 4. 모른다고 못 함 ══════════════════ */
+
+  var base = [3.2, 1.1, -0.5];
+  var off = 0;
+
+  function scores() {
+    return base.map(function (v) { return v + off; });
+  }
+
+  function renderOOD() {
+    var z = scores(), q = softmax(z), i;
+    var html = "";
+    for (i = 0; i < 3; i++) {
+      html += "<tr>"
+        + td(NAMES[i], "", "left")
+        + td(fmt(z[i], 1), "dim")
+        + td(pct(q[i]), q[i] === Math.max.apply(null, q) ? "pen" : "")
+        + "</tr>";
+    }
+    document.getElementById("t-ood").innerHTML = html;
+
+    [0, 1, 2].forEach(function (k) {
+      document.getElementById("m" + k).value = String(base[k]);
+      document.getElementById("m" + k + "-out").textContent = fmt(base[k], 1);
+    });
+    document.getElementById("moff").value = String(off);
+    document.getElementById("moff-out").textContent = fmt(off, 1);
+
+    Array.prototype.forEach.call(document.querySelectorAll("[data-pic]"), function (b) {
+      var v = b.getAttribute("data-pic").split(",").map(parseFloat);
+      b.setAttribute("aria-pressed",
+        (v[0] === base[0] && v[1] === base[1] && v[2] === base[2]) ? "true" : "false");
+    });
+
+    var top = q.indexOf(Math.max.apply(null, q));
+    var v = document.getElementById("ood-verdict");
+    if (Math.abs(off) > 2) {
+      v.innerHTML = "점수를 셋 다 <b>" + fmt(off, 1) + "</b> 만큼 옮겼는데 "
+        + "<b>확률은 한 칸도 안 움직였습니다.</b> Softmax는 점수의 <b>차이</b>만 봅니다 — "
+        + "모델에게는 “자신 없음”을 표현할 자리가 <b>구조적으로 없습니다.</b>";
+    } else {
+      v.innerHTML = "지금 모델의 답은 <b>" + NAMES[top] + " " + pct(q[top])
+        + "</b> 입니다. 뭘 넣든 셋 중 하나가 반드시 높게 나옵니다 — "
+        + "<b>“모르겠습니다”라는 선택지가 없습니다.</b>";
+    }
+
+    p4.draw();
+  }
+
+  [0, 1, 2].forEach(function (i) {
+    document.getElementById("m" + i).addEventListener("input", function () {
+      base[i] = parseFloat(this.value);
+      renderOOD();
+    });
+  });
+
+  document.getElementById("moff").addEventListener("input", function () {
+    off = parseFloat(this.value);
+    renderOOD();
+  });
+
+  Array.prototype.forEach.call(document.querySelectorAll("[data-pic]"), function (b) {
+    b.addEventListener("click", function () {
+      base = b.getAttribute("data-pic").split(",").map(parseFloat);
+      off = 0;
+      renderOOD();
+    });
+  });
+
+  var p4 = register(new Plot(document.getElementById("c4"), 0, 1, 0, 1), function (p) {
+    var q = softmax(scores());
+    stack(p, q, "점수를 어떻게 바꿔도 이 막대는 늘 가득 찹니다");
+  });
+
+  /* 주소 끝에 #2 처럼 붙이면 그 단계로 바로 열립니다 */
+  function openFromHash() {
+    var h = (location.hash || "").replace("#", "");
+    if (!h) return;
+    var b = document.querySelector('nav.steps button[data-step="' + h + '"]');
+    if (b) b.click();
+  }
+  window.addEventListener("hashchange", openFromHash);
+
+  function boot() {
+    renderNaive();
+    buildSoft();
+    renderSoftSum();
+    renderDiff();
+    renderOOD();
+    openFromHash();
+  }
+
+  /* ── 인쇄 · PDF 저장 ──────────────────── */
+
+  /* 탭을 전부 펴고 접힌 메모를 연 다음 canvas 를 다시 그립니다.
+     숨어 있던 canvas 는 폭이 0이라 그 전엔 백지입니다 */
+  function expandAll() {
+    document.body.classList.add("flat");
+    Array.prototype.forEach.call(document.querySelectorAll("section.panel"),
+      function (s) { s.hidden = false; });
+    Array.prototype.forEach.call(document.querySelectorAll("details"),
+      function (d) { d.open = true; });
+    redrawAll();
+    requestAnimationFrame(redrawAll);
+  }
+
+  window.addEventListener("beforeprint", expandAll);
+
+  (function () {
+    var bar = document.createElement("div");
+    bar.className = "print-bar";
+
+    var flat = document.createElement("button");
+    flat.type = "button";
+    flat.textContent = "전체 펼치기";
+    flat.addEventListener("click", expandAll);
+
+    var pr = document.createElement("button");
+    pr.type = "button";
+    pr.textContent = "인쇄 · PDF로 저장";
+    pr.addEventListener("click", function () {
+      expandAll();
+      setTimeout(function () { window.print(); }, 260);
+    });
+
+    bar.appendChild(flat);
+    bar.appendChild(pr);
+    var top = document.querySelector("header.top");
+    if (top) top.appendChild(bar);
+  })();
+/* ── 테마 · 리사이즈 ─────────────────── */
+
+  if (window.ResizeObserver) {
+    var ro = new ResizeObserver(redrawAll);
+    plots.forEach(function (p) { ro.observe(p.cv); });
+  } else {
+    window.addEventListener("resize", redrawAll);
+  }
+
+  new MutationObserver(redrawAll).observe(document.documentElement, {
+    attributes: true, attributeFilter: ["data-theme", "class", "style"]
+  });
+
+  if (window.matchMedia) {
+    var mq = window.matchMedia("(prefers-color-scheme: dark)");
+    if (mq.addEventListener) mq.addEventListener("change", redrawAll);
+  }
+
+  boot();
+  redrawAll();
+  requestAnimationFrame(redrawAll);
+})();
+</script>
+
+</html>

@@ -1,0 +1,347 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex, nofollow">
+<title>AI 세션 자료 — 전체 목록</title>
+
+<style>
+  :root {
+    --paper: #F1F4F7;
+    --card: #FBFCFD;
+    --ink: #0F1720;
+    --ink-2: #4A5763;
+    --ink-3: #7C8794;
+    --rule: #D8E0E8;
+    --pen: #0A5AA8;
+    --pen-soft: rgba(10, 90, 168, 0.10);
+    --warm: #A84A12;
+    --warm-soft: rgba(168, 74, 18, 0.10);
+    --font-body: "Pretendard Variable", Pretendard, -apple-system, BlinkMacSystemFont,
+      "Apple SD Gothic Neo", "Noto Sans KR", "Malgun Gothic", system-ui, sans-serif;
+    --font-mono: ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, "D2Coding", monospace;
+    --r: 3px;
+  }
+
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --paper: #0E141A; --card: #151D25; --ink: #E4EAF0; --ink-2: #9AA8B5;
+      --ink-3: #6E7C8A; --rule: #26313C; --pen: #5FA9EE;
+      --pen-soft: rgba(95, 169, 238, 0.14); --warm: #E3944F;
+      --warm-soft: rgba(227, 148, 79, 0.13);
+    }
+  }
+  :root[data-theme="dark"] {
+    --paper: #0E141A; --card: #151D25; --ink: #E4EAF0; --ink-2: #9AA8B5;
+    --ink-3: #6E7C8A; --rule: #26313C; --pen: #5FA9EE;
+    --pen-soft: rgba(95, 169, 238, 0.14); --warm: #E3944F;
+    --warm-soft: rgba(227, 148, 79, 0.13);
+  }
+
+  *, *::before, *::after { box-sizing: border-box; }
+  html, body { margin: 0; padding: 0; }
+
+  body {
+    background: var(--paper);
+    color: var(--ink);
+    font-family: var(--font-body);
+    font-size: 16px;
+    line-height: 1.7;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  .wrap { max-width: 940px; margin: 0 auto; padding: 0 20px 90px; }
+
+  header.top { padding: 46px 0 24px; border-bottom: 1px solid var(--rule); margin-bottom: 34px; }
+
+  .eyebrow {
+    font-family: var(--font-mono);
+    font-size: 11.5px;
+    letter-spacing: 0.14em;
+    color: var(--ink-3);
+    text-transform: uppercase;
+    margin-bottom: 10px;
+  }
+
+  h1 {
+    font-size: clamp(27px, 4.2vw, 40px);
+    line-height: 1.18;
+    font-weight: 700;
+    letter-spacing: -0.02em;
+    margin: 0 0 10px;
+  }
+
+  .lede { color: var(--ink-2); max-width: 64ch; margin: 0; font-size: 16px; }
+  .lede b { color: var(--ink); font-weight: 600; }
+
+  h2.sec {
+    font-size: 12px;
+    font-family: var(--font-mono);
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--ink-3);
+    margin: 38px 0 14px;
+    font-weight: 500;
+  }
+
+  .row {
+    display: grid;
+    grid-template-columns: 62px minmax(0, 1fr) auto;
+    gap: 18px;
+    align-items: start;
+    background: var(--card);
+    border: 1px solid var(--rule);
+    border-radius: var(--r);
+    padding: 16px 18px;
+  }
+  .row + .row { margin-top: 10px; }
+  .row.soon { opacity: 0.55; }
+
+  @media (max-width: 700px) {
+    .row { grid-template-columns: minmax(0, 1fr); gap: 10px; }
+  }
+
+  .no {
+    font-family: var(--font-mono);
+    font-size: 12px;
+    color: var(--ink-3);
+    letter-spacing: 0.06em;
+    padding-top: 3px;
+  }
+
+  .t { font-size: 16px; font-weight: 650; letter-spacing: -0.01em; }
+  .t em { font-style: normal; color: var(--ink-3); font-weight: 400; font-size: 13.5px; margin-left: 8px; }
+  .d { font-size: 13.5px; color: var(--ink-2); margin-top: 3px; }
+  .d b { color: var(--ink); font-weight: 600; }
+
+  .links { display: flex; gap: 7px; flex-wrap: wrap; padding-top: 2px; }
+
+  a.chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 13px;
+    font-weight: 550;
+    text-decoration: none;
+    color: var(--ink-2);
+    background: var(--paper);
+    border: 1px solid var(--rule);
+    border-radius: var(--r);
+    padding: 5px 11px;
+    white-space: nowrap;
+  }
+  a.chip:hover { color: var(--ink); border-color: var(--ink-3); }
+  a.chip.main { color: #fff; background: var(--pen); border-color: var(--pen); }
+  a.chip.main:hover { color: #fff; opacity: 0.9; }
+  :root[data-theme="dark"] a.chip.main { color: #0E141A; }
+  @media (prefers-color-scheme: dark) { a.chip.main { color: #0E141A; } }
+  :root[data-theme="light"] a.chip.main { color: #fff; }
+
+  .tag {
+    display: inline-block;
+    font-family: var(--font-mono);
+    font-size: 10.5px;
+    letter-spacing: 0.05em;
+    padding: 1px 6px;
+    border-radius: 2px;
+    vertical-align: 2px;
+    margin-left: 8px;
+  }
+  .tag.host { background: var(--pen-soft); color: var(--pen); }
+  .tag.paper { background: var(--warm-soft); color: var(--warm); }
+
+  .how {
+    margin-top: 42px;
+    border-top: 1px solid var(--rule);
+    padding-top: 22px;
+  }
+  .how h3 { font-size: 14.5px; margin: 0 0 10px; font-weight: 650; }
+  .how ul { margin: 0 0 22px; padding-left: 19px; color: var(--ink-2); font-size: 14px; }
+  .how li + li { margin-top: 6px; }
+  .how b { color: var(--ink); font-weight: 600; }
+  .how code {
+    font-family: var(--font-mono);
+    font-size: 12.5px;
+    background: var(--card);
+    border: 1px solid var(--rule);
+    border-radius: 2px;
+    padding: 1px 5px;
+  }
+
+  footer.foot {
+    margin-top: 46px;
+    padding-top: 18px;
+    border-top: 1px solid var(--rule);
+    font-size: 12.5px;
+    color: var(--ink-3);
+  }
+</style>
+
+<div class="wrap">
+
+  <header class="top">
+    <div class="eyebrow">AI 모델은 어떻게 동작하는가</div>
+    <h1>세션 자료 전체 목록</h1>
+    <p class="lede">
+      이 페이지 하나만 <b>브라우저 북마크</b>에 걸어두면 됩니다. 회차 자료는 여기서 눌러서 엽니다.
+      <span class="tag host">진행자</span> 는 진행자 화면에만 띄우는 것,
+      <span class="tag paper">인쇄</span> 는 종이로 나눠주는 것입니다.
+    </p>
+  </header>
+
+  <h2 class="sec">1부 — 선형</h2>
+
+  <div class="row">
+    <div class="no">1회차</div>
+    <div>
+      <div class="t">모눈종이<span class="tag paper">인쇄</span><em>5인분 뽑아가세요</em></div>
+      <div class="d">
+        점 5개가 미리 찍힌 A4 한 장. <b>자료 2번</b>(직선 긋기)과 <b>5번</b>(채점표)에 씁니다.
+        세로 한 칸 0.2억 · 가로 한 칸 1평. <b>이게 없으면 1회차는 진행이 안 됩니다.</b>
+      </div>
+    </div>
+    <div class="links">
+      <a class="chip main" href="session-01-모눈종이.html">열기</a>
+      <a class="chip" href="pdf/session-01-모눈종이.pdf">PDF</a>
+    </div>
+  </div>
+
+  <div class="row">
+    <div class="no">1회차</div>
+    <div>
+      <div class="t">추세선 시트<span class="tag host">진행자</span></div>
+      <div class="d">
+        <b>자료 6번</b>. 추세선과 수식 <code>y = 0.194x + 0.22</code> 까지 미리 달아둔 엑셀 파일입니다.
+        현장에서 메뉴 찾다가 20분 날리지 않게 <b>미리 열어두고 시작하세요.</b>
+      </div>
+    </div>
+    <div class="links">
+      <a class="chip main" href="session-01-추세선.xlsx">엑셀 열기</a>
+      <a class="chip" href="pdf/session-01-추세선.pdf">PDF</a>
+    </div>
+  </div>
+
+  <div class="row">
+    <div class="no">2회차</div>
+    <div>
+      <div class="t">골짜기를 내려가 봅시다<span class="tag host">진행자</span></div>
+      <div class="d">
+        <b>자료 3 ~ 7-1번</b>. U자 손실 곡선 · 안개 속 한 걸음 · 보폭(학습률) · 제곱하는 이유.
+        1회차 집값 다섯 채로 <b>실제 계산한 숫자</b>가 나옵니다.
+      </div>
+    </div>
+    <div class="links">
+      <a class="chip main" href="session-02-경사하강.html">열기</a>
+      <a class="chip" href="pdf/session-02-경사하강.pdf">PDF</a>
+    </div>
+  </div>
+
+  <h2 class="sec">2부 — 비선형 · 여기가 딥러닝</h2>
+
+  <div class="row">
+    <div class="no">3회차</div>
+    <div>
+      <div class="t">선을 꺾어봅시다</div>
+      <div class="d">
+        <b>자료 5-3 ~ 6번</b>. 음수를 0으로 · 꺾이는 자리 옮기기 · 꺾인 선 여러 개 더하기 ·
+        숫자로 확인. 표를 채우면 그래프에 점이 하나씩 찍힙니다.
+      </div>
+    </div>
+    <div class="links">
+      <a class="chip main" href="session-03-relu.html">열기</a>
+      <a class="chip" href="pdf/session-03-relu.pdf">PDF</a>
+    </div>
+  </div>
+
+  <div class="row">
+    <div class="no">4회차</div>
+    <div>
+      <div class="t">17개를 직접 통과시켜 봅시다</div>
+      <div class="d">
+        <b>자료 5 ~ 7번</b>. 파라미터 세기 · 집 하나를 넣어 4.4억 내보기 · 3×3 격자를 눌러
+        <b>가중치가 곧 찾는 모양</b>이라는 걸 확인하기.
+      </div>
+    </div>
+    <div class="links">
+      <a class="chip main" href="session-04-파라미터.html">열기</a>
+      <a class="chip" href="pdf/session-04-파라미터.pdf">PDF</a>
+    </div>
+  </div>
+
+  <h2 class="sec">3부 — 그 답을 믿을 수 있는가</h2>
+
+  <div class="row">
+    <div class="no">5회차</div>
+    <div>
+      <div class="t">87%는 어디서 나온 숫자인가</div>
+      <div class="d">
+        <b>자료 3 ~ 7번</b>. 순진한 방법이 왜 깨지는지 · Softmax 두 단계 ·
+        3점 차이가 95%가 되는 것 · <b>모른다고 말할 수 없다는 것</b>.
+      </div>
+    </div>
+    <div class="links">
+      <a class="chip main" href="session-05-softmax.html">열기</a>
+      <a class="chip" href="pdf/session-05-softmax.pdf">PDF</a>
+    </div>
+  </div>
+
+  <div class="row soon">
+    <div class="no">6회차</div>
+    <div>
+      <div class="t">학습의 함정<em>자료 작성 전</em></div>
+      <div class="d">과적합 · 데이터 편향 · 정밀도와 재현율. 실습은 Teachable Machine.</div>
+    </div>
+    <div class="links"></div>
+  </div>
+
+  <h2 class="sec">4부 — 실제 모델</h2>
+
+  <div class="row soon">
+    <div class="no">7~10</div>
+    <div>
+      <div class="t">학습 vs 추론 · 사진을 보는 모델 · 글을 다루는 모델 · 한계와 협업법<em>자료 작성 전</em></div>
+      <div class="d">
+        10회차는 <b>1회차 0번으로 돌아가면서</b> 시작합니다 —
+        첫날 받아 적어둔 “AI가 뭐라고 생각하세요?” 답변이 필요합니다.
+      </div>
+    </div>
+    <div class="links"></div>
+  </div>
+
+  <div class="how">
+    <h3>쓰는 법</h3>
+    <ul>
+      <li><b>이 페이지를 북마크하세요.</b> 회차마다 파일을 찾아 헤매지 않으려고 만든 페이지입니다.</li>
+      <li>세션 페이지 주소 끝에 <code>#2</code> 처럼 붙이면 <b>그 단계로 바로 열립니다.</b>
+        발표 중간부터 시작할 때 씁니다.</li>
+      <li>각 페이지 오른쪽 위 <b>“전체 펼치기”</b> 를 누르면 탭이 전부 펴집니다.
+        스크롤로 쭉 훑을 때 편합니다.</li>
+      <li><b>인쇄 · PDF로 저장</b> 을 누르면 네 단계가 전부 펼쳐진 채로 인쇄됩니다.
+        그냥 인쇄하면 <b>열려 있는 탭 하나만</b> 나오니 이 버튼을 쓰세요.</li>
+    </ul>
+
+    <h3>노션에 올릴 때</h3>
+    <ul>
+      <li>옆의 <b>PDF</b> 링크가 이미 만들어둔 파일입니다. <code>asset/pdf/</code> 에 있고
+        노션에 그대로 끌어다 놓으면 됩니다.</li>
+      <li>슬라이더·입력칸은 <b>PDF에서는 안 움직입니다.</b> 지금 상태가 그림으로 굳습니다 —
+        문제 칸을 채운 채로 남기고 싶으면 <b>답 보기</b>를 누른 다음 인쇄하세요.</li>
+      <li>내용을 고쳤으면 PDF도 다시 뽑아야 합니다. HTML을 열고
+        <b>인쇄 · PDF로 저장</b> → <code>asset/pdf/</code> 에 같은 이름으로 덮어쓰기.</li>
+    </ul>
+
+    <h3>옵시디언에서</h3>
+    <ul>
+      <li>Obsidian은 HTML을 <b>그대로 못 엽니다.</b> 노트의 링크를 누르면
+        “지원되지 않는 파일 형식” 화면이 뜨고, 거기 <b>기본 앱으로 열기</b>를 누르면 브라우저로 넘어갑니다.</li>
+      <li>어차피 프로젝터에는 브라우저를 띄우는 게 낫습니다 — 전체화면도 되고 확대도 됩니다.</li>
+    </ul>
+  </div>
+
+  <footer class="foot">
+    자료 원본은 <b>study/ai/session/</b> 의 마크다운 노트입니다. 이 페이지는 그 자료의 화면용 짝입니다.
+  </footer>
+</div>
+
+</html>

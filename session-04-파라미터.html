@@ -1,0 +1,1943 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex, nofollow">
+<title>17개를 직접 통과시켜 봅시다 — 4회차 실습</title>
+<style>
+  :root {
+    --paper: #F1F4F7;
+    --card: #FBFCFD;
+    --ink: #0F1720;
+    --ink-2: #4A5763;
+    --ink-3: #7C8794;
+    --rule: #D8E0E8;
+    --grid: #E4EAF0;
+    --pen: #0A5AA8;
+    --pen-soft: rgba(10, 90, 168, 0.10);
+    --warm: #A84A12;
+    --warm-soft: rgba(168, 74, 18, 0.10);
+    --dash: #8A97A4;
+    --ok: #1C6B4A;
+    --bad: #A32B2B;
+
+    --font-body: "Pretendard Variable", Pretendard, -apple-system, BlinkMacSystemFont,
+      "Apple SD Gothic Neo", "Noto Sans KR", "Malgun Gothic", system-ui, sans-serif;
+    --font-mono: ui-monospace, SFMono-Regular, "SF Mono", "Cascadia Mono", Menlo,
+      Consolas, "D2Coding", monospace;
+
+    --r: 3px;
+  }
+
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --paper: #0E141A;
+      --card: #151D25;
+      --ink: #E4EAF0;
+      --ink-2: #9AA8B5;
+      --ink-3: #6E7C8A;
+      --rule: #26313C;
+      --grid: #1E2833;
+      --pen: #5FA9EE;
+      --pen-soft: rgba(95, 169, 238, 0.14);
+      --warm: #E3944F;
+      --warm-soft: rgba(227, 148, 79, 0.13);
+      --dash: #6E7C8A;
+      --ok: #63C79A;
+      --bad: #E4756F;
+    }
+  }
+
+  :root[data-theme="dark"] {
+    --paper: #0E141A;
+    --card: #151D25;
+    --ink: #E4EAF0;
+    --ink-2: #9AA8B5;
+    --ink-3: #6E7C8A;
+    --rule: #26313C;
+    --grid: #1E2833;
+    --pen: #5FA9EE;
+    --pen-soft: rgba(95, 169, 238, 0.14);
+    --warm: #E3944F;
+    --warm-soft: rgba(227, 148, 79, 0.13);
+    --dash: #6E7C8A;
+    --ok: #63C79A;
+    --bad: #E4756F;
+  }
+
+  :root[data-theme="light"] {
+    --paper: #F1F4F7;
+    --card: #FBFCFD;
+    --ink: #0F1720;
+    --ink-2: #4A5763;
+    --ink-3: #7C8794;
+    --rule: #D8E0E8;
+    --grid: #E4EAF0;
+    --pen: #0A5AA8;
+    --pen-soft: rgba(10, 90, 168, 0.10);
+    --warm: #A84A12;
+    --warm-soft: rgba(168, 74, 18, 0.10);
+    --dash: #8A97A4;
+    --ok: #1C6B4A;
+    --bad: #A32B2B;
+  }
+
+  body {
+    background: var(--paper);
+    color: var(--ink);
+    font-family: var(--font-body);
+    font-size: 16px;
+    line-height: 1.7;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  .wrap {
+    max-width: 1080px;
+    margin: 0 auto;
+    padding: 0 20px 96px;
+  }
+
+  /* ── 머리 ─────────────────────────────── */
+
+  header.top {
+    padding: 44px 0 26px;
+    border-bottom: 1px solid var(--rule);
+  }
+
+  .eyebrow {
+    font-family: var(--font-mono);
+    font-size: 11.5px;
+    letter-spacing: 0.14em;
+    color: var(--ink-3);
+    text-transform: uppercase;
+    margin-bottom: 10px;
+  }
+
+  h1 {
+    font-size: clamp(28px, 4.4vw, 42px);
+    line-height: 1.18;
+    font-weight: 700;
+    letter-spacing: -0.02em;
+    text-wrap: balance;
+    margin-bottom: 10px;
+  }
+
+  .lede {
+    color: var(--ink-2);
+    max-width: 62ch;
+    font-size: 16.5px;
+  }
+
+  /* ── 스텝 네비 ─────────────────────────── */
+
+  nav.steps {
+    position: sticky;
+    top: 0;
+    z-index: 20;
+    background: var(--paper);
+    border-bottom: 1px solid var(--rule);
+    display: flex;
+    gap: 2px;
+    overflow-x: auto;
+    scrollbar-width: thin;
+    margin-bottom: 34px;
+  }
+
+  nav.steps button {
+    flex: 0 0 auto;
+    appearance: none;
+    background: none;
+    border: 0;
+    border-bottom: 2px solid transparent;
+    color: var(--ink-3);
+    font-family: var(--font-body);
+    font-size: 14.5px;
+    font-weight: 500;
+    padding: 15px 16px 13px;
+    cursor: pointer;
+    white-space: nowrap;
+    display: flex;
+    align-items: baseline;
+    gap: 8px;
+  }
+
+  nav.steps button .n {
+    font-family: var(--font-mono);
+    font-size: 12px;
+    color: var(--ink-3);
+  }
+
+  nav.steps button:hover {
+    color: var(--ink);
+  }
+
+  nav.steps button[aria-selected="true"] {
+    color: var(--ink);
+    border-bottom-color: var(--pen);
+    font-weight: 600;
+  }
+
+  nav.steps button[aria-selected="true"] .n {
+    color: var(--pen);
+  }
+
+  /* ── 패널 ─────────────────────────────── */
+
+  section.panel[hidden] {
+    display: none;
+  }
+
+  .panel-head {
+    margin-bottom: 24px;
+  }
+
+  .panel-head h2 {
+    font-size: clamp(21px, 2.6vw, 27px);
+    font-weight: 650;
+    letter-spacing: -0.015em;
+    line-height: 1.3;
+    text-wrap: balance;
+    margin-bottom: 8px;
+  }
+
+  .panel-head p {
+    color: var(--ink-2);
+    max-width: 64ch;
+  }
+
+  .split {
+    display: grid;
+    grid-template-columns: minmax(0, 0.92fr) minmax(0, 1.08fr);
+    gap: 26px;
+    align-items: start;
+  }
+
+  @media (max-width: 900px) {
+    .split {
+      grid-template-columns: minmax(0, 1fr);
+    }
+  }
+
+  .card {
+    background: var(--card);
+    border: 1px solid var(--rule);
+    border-radius: var(--r);
+    padding: 20px;
+  }
+
+  .card + .card {
+    margin-top: 18px;
+  }
+
+  .card > h3 {
+    font-size: 13px;
+    font-weight: 650;
+    letter-spacing: 0.02em;
+    color: var(--ink-2);
+    margin-bottom: 14px;
+    padding-bottom: 10px;
+    border-bottom: 1px solid var(--rule);
+  }
+
+  /* ── 규칙 상자 ─────────────────────────── */
+
+  .rule-box {
+    border-left: 3px solid var(--warm);
+    background: var(--warm-soft);
+    padding: 14px 18px;
+    border-radius: 0 var(--r) var(--r) 0;
+    margin-bottom: 18px;
+  }
+
+  .rule-box strong {
+    font-weight: 650;
+  }
+
+  .rule-box p + p {
+    margin-top: 2px;
+  }
+
+  /* ── 표 ───────────────────────────────── */
+
+  .table-scroll {
+    overflow-x: auto;
+  }
+
+  table {
+    border-collapse: collapse;
+    width: 100%;
+    font-variant-numeric: tabular-nums;
+  }
+
+  th, td {
+    text-align: right;
+    padding: 7px 12px;
+    border-bottom: 1px solid var(--rule);
+    font-family: var(--font-mono);
+    font-size: 14px;
+    white-space: nowrap;
+  }
+
+  th {
+    font-family: var(--font-body);
+    font-size: 12.5px;
+    font-weight: 600;
+    color: var(--ink-2);
+    letter-spacing: 0.01em;
+    border-bottom-width: 1.5px;
+  }
+
+  tbody tr:last-child td {
+    border-bottom: 0;
+  }
+
+  td.dim {
+    color: var(--ink-3);
+  }
+
+  td.pen {
+    color: var(--pen);
+    font-weight: 600;
+  }
+
+  td.warm {
+    color: var(--warm);
+    font-weight: 600;
+  }
+
+  /* ── 표 안 입력칸 ──────────────────────── */
+
+  input.cell {
+    width: 62px;
+    text-align: right;
+    font-family: var(--font-mono);
+    font-size: 14px;
+    color: var(--ink);
+    background: transparent;
+    border: 1px solid var(--rule);
+    border-radius: var(--r);
+    padding: 3px 7px;
+  }
+
+  input.cell:focus-visible {
+    outline: 2px solid var(--pen);
+    outline-offset: 1px;
+  }
+
+  input.cell[data-state="ok"] {
+    border-color: var(--pen);
+    color: var(--pen);
+    font-weight: 600;
+    background: var(--pen-soft);
+  }
+
+  input.cell[data-state="bad"] {
+    border-color: var(--bad);
+    color: var(--bad);
+  }
+
+  .mark {
+    display: inline-block;
+    width: 1.2em;
+    font-family: var(--font-mono);
+    font-size: 13px;
+  }
+
+  .mark.ok { color: var(--pen); }
+  .mark.bad { color: var(--bad); }
+
+  /* ── 컨트롤 ───────────────────────────── */
+
+  .ctrl {
+    display: grid;
+    grid-template-columns: 74px minmax(0, 1fr) 54px;
+    align-items: center;
+    gap: 12px;
+  }
+
+  .ctrl + .ctrl {
+    margin-top: 11px;
+  }
+
+  .ctrl label {
+    font-size: 13.5px;
+    color: var(--ink-2);
+  }
+
+  .ctrl label b {
+    font-family: var(--font-mono);
+    color: var(--ink);
+    font-weight: 600;
+  }
+
+  .ctrl output {
+    font-family: var(--font-mono);
+    font-size: 14px;
+    text-align: right;
+    font-variant-numeric: tabular-nums;
+    color: var(--ink);
+  }
+
+  input[type="range"] {
+    appearance: none;
+    width: 100%;
+    height: 22px;
+    background: transparent;
+    cursor: pointer;
+  }
+
+  input[type="range"]::-webkit-slider-runnable-track {
+    height: 2px;
+    background: var(--rule);
+  }
+
+  input[type="range"]::-moz-range-track {
+    height: 2px;
+    background: var(--rule);
+  }
+
+  input[type="range"]::-webkit-slider-thumb {
+    appearance: none;
+    width: 15px;
+    height: 15px;
+    border-radius: 50%;
+    background: var(--pen);
+    margin-top: -6.5px;
+    border: 0;
+  }
+
+  input[type="range"]::-moz-range-thumb {
+    width: 15px;
+    height: 15px;
+    border-radius: 50%;
+    background: var(--pen);
+    border: 0;
+  }
+
+  input[type="range"]:focus-visible {
+    outline: 2px solid var(--pen);
+    outline-offset: 3px;
+  }
+
+  /* ── 버튼 ─────────────────────────────── */
+
+  .btn-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-top: 16px;
+  }
+
+  button.btn {
+    appearance: none;
+    font-family: var(--font-body);
+    font-size: 13.5px;
+    font-weight: 550;
+    color: var(--ink);
+    background: var(--card);
+    border: 1px solid var(--rule);
+    border-radius: var(--r);
+    padding: 7px 13px;
+    cursor: pointer;
+  }
+
+  button.btn:hover {
+    border-color: var(--ink-3);
+  }
+
+  button.btn:focus-visible {
+    outline: 2px solid var(--pen);
+    outline-offset: 1px;
+  }
+
+  button.btn[aria-pressed="true"] {
+    background: var(--pen);
+    border-color: var(--pen);
+    color: #fff;
+  }
+
+  :root[data-theme="dark"] button.btn[aria-pressed="true"],
+  :root[data-theme="dark"] .swatch-pen {
+    color: #0E141A;
+  }
+
+  @media (prefers-color-scheme: dark) {
+    button.btn[aria-pressed="true"] { color: #0E141A; }
+  }
+
+  :root[data-theme="light"] button.btn[aria-pressed="true"] { color: #fff; }
+
+  .seg {
+    display: inline-flex;
+    gap: 0;
+    border: 1px solid var(--rule);
+    border-radius: var(--r);
+    overflow: hidden;
+  }
+
+  .seg button {
+    appearance: none;
+    border: 0;
+    border-right: 1px solid var(--rule);
+    background: var(--card);
+    color: var(--ink-2);
+    font-family: var(--font-body);
+    font-size: 13px;
+    font-weight: 550;
+    padding: 7px 13px;
+    cursor: pointer;
+  }
+
+  .seg button:last-child { border-right: 0; }
+
+  .seg button[aria-pressed="true"] {
+    background: var(--pen);
+    color: #fff;
+  }
+
+  :root[data-theme="dark"] .seg button[aria-pressed="true"] { color: #0E141A; }
+  @media (prefers-color-scheme: dark) {
+    .seg button[aria-pressed="true"] { color: #0E141A; }
+  }
+  :root[data-theme="light"] .seg button[aria-pressed="true"] { color: #fff; }
+
+  .seg button:focus-visible {
+    outline: 2px solid var(--pen);
+    outline-offset: -2px;
+  }
+
+  /* ── 그래프 ───────────────────────────── */
+
+  .plot-box {
+    background: var(--card);
+    border: 1px solid var(--rule);
+    border-radius: var(--r);
+    padding: 14px;
+  }
+
+  canvas {
+    display: block;
+    width: 100%;
+    aspect-ratio: 4 / 3;
+  }
+
+  .legend {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px 18px;
+    margin-top: 12px;
+    padding-top: 12px;
+    border-top: 1px solid var(--rule);
+    font-size: 12.5px;
+    color: var(--ink-2);
+  }
+
+  .legend span {
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+  }
+
+  .key {
+    width: 20px;
+    height: 0;
+    border-top-width: 2.5px;
+    border-top-style: solid;
+    flex: 0 0 auto;
+  }
+
+  .key.pen { border-color: var(--pen); }
+  .key.dash { border-color: var(--dash); border-top-style: dashed; }
+  .key.thin { border-color: var(--pen); opacity: 0.4; border-top-width: 1.5px; }
+
+  .key.fill {
+    height: 11px;
+    border: 0;
+    background: var(--warm-soft);
+    border-left: 2px solid var(--warm);
+  }
+
+  /* ── 메모 / 요약 ──────────────────────── */
+
+  .note {
+    font-size: 14px;
+    color: var(--ink-2);
+    margin-top: 14px;
+  }
+
+  .note b { color: var(--ink); font-weight: 600; }
+
+  .verdict {
+    margin-top: 18px;
+    padding: 15px 18px;
+    border-left: 3px solid var(--pen);
+    background: var(--pen-soft);
+    border-radius: 0 var(--r) var(--r) 0;
+    font-size: 15px;
+  }
+
+  .verdict[hidden] { display: none; }
+
+  details.memo {
+    margin-top: 28px;
+    border-top: 1px solid var(--rule);
+    padding-top: 16px;
+  }
+
+  details.memo summary {
+    cursor: pointer;
+    font-family: var(--font-mono);
+    font-size: 11.5px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--ink-3);
+    list-style: none;
+  }
+
+  details.memo summary::-webkit-details-marker { display: none; }
+
+  details.memo summary::before {
+    content: "▸ ";
+  }
+
+  details.memo[open] summary::before {
+    content: "▾ ";
+  }
+
+  details.memo ul {
+    margin: 14px 0 0 0;
+    padding-left: 20px;
+    font-size: 14.5px;
+    color: var(--ink-2);
+  }
+
+  details.memo li + li { margin-top: 7px; }
+
+  details.memo b { color: var(--ink); font-weight: 600; }
+
+  .flow {
+    font-family: var(--font-mono);
+    font-size: 13px;
+    color: var(--ink-2);
+    background: var(--paper);
+    border: 1px solid var(--rule);
+    border-radius: var(--r);
+    padding: 12px 14px;
+    margin-bottom: 16px;
+    overflow-x: auto;
+    white-space: nowrap;
+  }
+
+  .flow em {
+    font-style: normal;
+    color: var(--warm);
+    font-weight: 600;
+  }
+
+  .flow i {
+    font-style: normal;
+    color: var(--pen);
+    font-weight: 600;
+  }
+
+  .line-row {
+    display: grid;
+    grid-template-columns: 26px repeat(3, minmax(0, 1fr));
+    gap: 10px;
+    align-items: center;
+    padding: 10px 0;
+    border-bottom: 1px solid var(--rule);
+  }
+
+  .line-row:last-of-type { border-bottom: 0; }
+
+  .line-row .tag {
+    font-family: var(--font-mono);
+    font-size: 12px;
+    color: var(--ink-2);
+  }
+
+  .line-row .mini {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+  }
+
+  .line-row .mini span {
+    font-size: 11px;
+    color: var(--ink-3);
+    font-family: var(--font-mono);
+    display: flex;
+    justify-content: space-between;
+  }
+
+  .line-row.off { opacity: 0.38; }
+
+  .col-head {
+    display: grid;
+    grid-template-columns: 26px repeat(3, minmax(0, 1fr));
+    gap: 10px;
+    font-size: 11.5px;
+    color: var(--ink-3);
+    padding-bottom: 8px;
+    border-bottom: 1.5px solid var(--rule);
+  }
+
+  .two-tables {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 18px;
+  }
+
+  footer.foot {
+    margin-top: 56px;
+    padding-top: 20px;
+    border-top: 1px solid var(--rule);
+    font-size: 13px;
+    color: var(--ink-3);
+  }
+
+  @media (prefers-reduced-motion: no-preference) {
+    input.cell { transition: border-color .12s, background .12s; }
+  }
+</style>
+<style>
+  /* ── 인쇄 · PDF 저장 ──────────────────── */
+
+  .print-bar {
+    display: flex;
+    justify-content: flex-end;
+    gap: 8px;
+    margin-top: 14px;
+  }
+
+  .print-bar button {
+    appearance: none;
+    font-family: var(--font-body);
+    font-size: 12.5px;
+    font-weight: 550;
+    color: var(--ink-2);
+    background: none;
+    border: 1px solid var(--rule);
+    border-radius: var(--r);
+    padding: 5px 11px;
+    cursor: pointer;
+  }
+  .print-bar button:hover { color: var(--ink); border-color: var(--ink-3); }
+
+  body.flat nav.steps { display: none; }
+  body.flat section.panel { display: block !important; }
+  body.flat section.panel + section.panel {
+    margin-top: 46px;
+    padding-top: 34px;
+    border-top: 1px solid var(--rule);
+  }
+
+  @media print {
+    @page { size: A4 portrait; margin: 13mm 11mm; }
+
+    :root {
+      --paper: #fff;
+      --card: #fff;
+      --ink: #14181c;
+      --ink-2: #3d4750;
+      --ink-3: #6b7680;
+      --rule: #c8d0d8;
+      --grid: #e6ebf0;
+      --pen: #0A5AA8;
+      --warm: #A84A12;
+    }
+
+    * { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+
+    body { background: #fff; font-size: 11.5px; }
+    .wrap { max-width: none; padding: 0; }
+
+    nav.steps, .print-bar, .btn-row { display: none !important; }
+    input[type="range"] { display: none !important; }
+    .ctrl { grid-template-columns: 92px 1fr; }
+    .ctrl output { text-align: left; }
+
+    header.top { padding: 0 0 18px; break-after: avoid; }
+    h1 { font-size: 25px; }
+
+    section.panel { display: block !important; break-before: page; }
+    section.panel:first-of-type { break-before: auto; }
+    section.panel + section.panel { margin-top: 0; padding-top: 0; border-top: 0; }
+
+    .panel-head { break-after: avoid; }
+    .split { grid-template-columns: minmax(0, 1fr) !important; gap: 16px; }
+    .card, .plot-box, details.memo, .verdict, table { break-inside: avoid; }
+    .card + .card, .plot-box + .plot-box { margin-top: 14px; }
+
+    canvas { aspect-ratio: 16 / 9; max-height: 78mm; }
+
+    details.memo { margin-top: 20px; }
+    details.memo summary { color: var(--ink-2); }
+
+    footer.foot { break-inside: avoid; }
+  }
+</style>
+
+<style>
+  th small {
+    display: block;
+    font-weight: 400;
+    font-size: 10.5px;
+    color: var(--ink-3);
+    font-family: var(--font-mono);
+    letter-spacing: 0;
+  }
+
+  tfoot th { border-top: 1.5px solid var(--rule); border-bottom: 0; padding-top: 9px; }
+  tfoot th b { font-family: var(--font-mono); color: var(--ink); }
+
+  td.warm-cell { color: var(--warm); font-weight: 600; }
+  td.dead { color: var(--ink-3); text-decoration: line-through; }
+
+  /* 개수 입력칸 */
+  .num-row {
+    display: grid;
+    grid-template-columns: 96px 78px 1fr;
+    align-items: center;
+    gap: 12px;
+  }
+  .num-row + .num-row { margin-top: 10px; }
+  .num-row label { font-size: 13.5px; color: var(--ink-2); }
+  .num-row label b { font-family: var(--font-mono); color: var(--ink); font-weight: 600; }
+  .num-row .hint { font-size: 12px; color: var(--ink-3); }
+
+  input.num {
+    width: 100%;
+    font-family: var(--font-mono);
+    font-size: 14.5px;
+    text-align: right;
+    color: var(--ink);
+    background: var(--paper);
+    border: 1px solid var(--rule);
+    border-radius: var(--r);
+    padding: 5px 8px;
+  }
+  input.num:focus-visible { outline: 2px solid var(--pen); outline-offset: 1px; }
+
+  /* 큰 숫자 한 줄 */
+  .big {
+    margin-top: 16px;
+    padding-top: 14px;
+    border-top: 1px solid var(--rule);
+    display: flex;
+    align-items: baseline;
+    gap: 10px;
+  }
+  .big .v {
+    font-family: var(--font-mono);
+    font-size: clamp(24px, 3.4vw, 34px);
+    font-weight: 700;
+    color: var(--pen);
+    letter-spacing: -0.02em;
+    font-variant-numeric: tabular-nums;
+  }
+  .big .u { font-size: 13.5px; color: var(--ink-2); }
+
+  /* 3×3 격자 */
+  .grid3 {
+    display: grid;
+    grid-template-columns: repeat(3, 38px);
+    gap: 4px;
+    justify-content: start;
+  }
+  .grid3.wide { grid-template-columns: repeat(3, 44px); }
+
+  .grid3 button,
+  .grid3 span {
+    appearance: none;
+    height: 38px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 1px solid var(--rule);
+    border-radius: var(--r);
+    background: var(--paper);
+    color: var(--ink-3);
+    font-family: var(--font-mono);
+    font-size: 13px;
+    font-variant-numeric: tabular-nums;
+  }
+  .grid3.wide span { height: 40px; font-size: 13.5px; }
+  .grid3 button { cursor: pointer; font-size: 14px; font-weight: 600; }
+  .grid3 button:focus-visible { outline: 2px solid var(--pen); outline-offset: 1px; }
+
+  .grid3 button[aria-pressed="true"] {
+    background: var(--ink);
+    border-color: var(--ink);
+    color: var(--paper);
+  }
+  .grid3 span.pos { color: var(--pen); border-color: var(--pen); background: var(--pen-soft); }
+  .grid3 span.neg { color: var(--warm); border-color: var(--warm); background: var(--warm-soft); }
+  .grid3 span.zero { opacity: 0.45; }
+
+  .grid-row {
+    display: flex;
+    gap: 22px;
+    flex-wrap: wrap;
+    align-items: flex-start;
+  }
+  .grid-row .gl {
+    font-size: 12px;
+    color: var(--ink-2);
+    margin-bottom: 7px;
+    font-weight: 600;
+  }
+  .grid-row .op {
+    align-self: center;
+    font-family: var(--font-mono);
+    font-size: 17px;
+    color: var(--ink-3);
+    padding-top: 14px;
+  }
+
+  .fire {
+    margin-top: 14px;
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+  }
+  .fire .chip {
+    border: 1px solid var(--rule);
+    border-radius: var(--r);
+    padding: 8px 13px;
+    font-size: 13.5px;
+    color: var(--ink-2);
+    background: var(--paper);
+  }
+  .fire .chip b {
+    font-family: var(--font-mono);
+    color: var(--ink-3);
+    font-weight: 600;
+    margin-left: 7px;
+  }
+  .fire .chip.on {
+    border-color: var(--pen);
+    background: var(--pen-soft);
+    color: var(--ink);
+  }
+  .fire .chip.on b { color: var(--pen); }
+</style>
+<div class="wrap">
+
+  <header class="top">
+    <div class="eyebrow">AI 세션 4회차 · 실습</div>
+    <h1>17개를 직접 통과시켜 봅시다</h1>
+    <p class="lede">
+      자료 <b>5번부터 7번까지</b>를 화면에서 그대로 따라가는 페이지입니다.
+      숫자를 세고, 손으로 통과시키고, 마지막에 <b>가중치가 곧 찾는 모양</b>이라는 걸 확인합니다.
+    </p>
+  </header>
+
+  <nav class="steps" role="tablist" aria-label="실습 단계">
+    <button role="tab" aria-selected="true" data-step="1"><span class="n">5</span>파라미터 세기</button>
+    <button role="tab" aria-selected="false" data-step="2"><span class="n">6</span>17개 통과시키기</button>
+    <button role="tab" aria-selected="false" data-step="3"><span class="n">7</span>가중치 = 찾는 모양</button>
+  </nav>
+
+  <!-- ══ 1 ══════════════════════════════════ -->
+  <section class="panel" data-panel="1">
+    <div class="panel-head">
+      <h2>숫자가 몇 개인지 세어봅시다</h2>
+      <p>
+        입력·뉴런·출력 개수를 바꾸면 오른쪽 그림의 <b>선이 늘어납니다.</b>
+        그 선 하나하나가 가중치 하나입니다. 세는 방법은 자료 5번과 똑같습니다.
+      </p>
+    </div>
+
+    <div class="split">
+      <div>
+        <div class="card">
+          <h3>신경망 크기</h3>
+          <div class="num-row">
+            <label for="n-in"><b>입력</b> 개수</label>
+            <input class="num" type="number" id="n-in" min="1" max="4096" step="1" value="2">
+            <span class="hint">평수, 거리 …</span>
+          </div>
+          <div class="num-row">
+            <label for="n-hid"><b>은닉 뉴런</b></label>
+            <input class="num" type="number" id="n-hid" min="1" max="4096" step="1" value="4">
+            <span class="hint">한 층에 몇 개</span>
+          </div>
+          <div class="num-row">
+            <label for="n-out"><b>출력</b> 개수</label>
+            <input class="num" type="number" id="n-out" min="1" max="1024" step="1" value="1">
+            <span class="hint">답이 몇 칸으로 나오나</span>
+          </div>
+
+          <div class="btn-row">
+            <div class="seg" role="group" aria-label="미리 정해둔 크기">
+              <button data-net="2,4,1" aria-pressed="true">우리 예제</button>
+              <button data-net="784,128,10" aria-pressed="false">손글씨 숫자</button>
+            </div>
+          </div>
+        </div>
+
+        <div class="card">
+          <h3>세는 법 — 자료 5번 그대로</h3>
+          <div class="table-scroll">
+            <table>
+              <thead>
+                <tr>
+                  <th style="text-align:left">어디서 어디로</th>
+                  <th>가중치</th>
+                  <th>편향</th>
+                  <th>소계</th>
+                </tr>
+              </thead>
+              <tbody id="t-count"></tbody>
+              <tfoot>
+                <tr>
+                  <th style="text-align:left" colspan="3">합계</th>
+                  <th id="c-total" style="text-align:right"></th>
+                </tr>
+              </tfoot>
+            </table>
+          </div>
+
+          <div class="big">
+            <span class="v" id="c-big">17</span>
+            <span class="u">개의 숫자 — <b id="c-verb">이 신경망의 전부</b></span>
+          </div>
+
+          <p class="note" id="c-feel"></p>
+        </div>
+      </div>
+
+      <div class="plot-box">
+        <canvas id="c1" aria-label="입력·뉴런·출력을 잇는 선 그림"></canvas>
+        <div class="legend">
+          <span><i class="key thin"></i>선 하나 = 가중치 하나</span>
+          <span><i class="key fill"></i>동그라미마다 편향 하나</span>
+        </div>
+      </div>
+    </div>
+
+    <details class="memo">
+      <summary>진행자 메모</summary>
+      <ul>
+        <li><b>뉴런 수만 2 → 4 → 8 로 올려보세요.</b> 선이 어떻게 늘어나는지 보고 나서
+          숫자를 읽는 순서가 낫습니다. 숫자부터 보면 그냥 산수가 됩니다.</li>
+        <li><b>손글씨 숫자</b> 버튼을 누르면 그림이 사라지고 “못 그린다”가 뜹니다.
+          그게 자료 7-4의 10만 개예요. <b>구조는 하나도 안 바뀌었다</b>는 걸 짚어주세요.</li>
+        <li>맨 아래 <b>GPT-3 몇 배</b> 줄이 오늘의 한 문장입니다 — 원리가 아니라 칸 수의 문제.</li>
+      </ul>
+    </details>
+  </section>
+
+  <!-- ══ 2 ══════════════════════════════════ -->
+  <section class="panel" data-panel="2" hidden>
+    <div class="panel-head">
+      <h2>집 하나를 넣어서 4.4억이 나오는 과정</h2>
+      <p>
+        자료 6번의 그 17개입니다. <b>평수와 거리를 움직여보세요.</b>
+        어떤 집이 들어오느냐에 따라 <b>일하는 뉴런이 바뀝니다.</b> 그게 이 화면의 전부입니다.
+      </p>
+    </div>
+
+    <div class="split">
+      <div>
+        <div class="card">
+          <h3>어떤 집을 넣을까요</h3>
+          <div class="ctrl">
+            <label for="s-py"><b>평수</b></label>
+            <input type="range" id="s-py" min="8" max="50" step="1" value="20">
+            <output id="s-py-out">20</output>
+          </div>
+          <div class="ctrl">
+            <label for="s-mn"><b>역까지</b></label>
+            <input type="range" id="s-mn" min="1" max="20" step="1" value="5">
+            <output id="s-mn-out">5분</output>
+          </div>
+
+          <div class="btn-row">
+            <div class="seg" role="group" aria-label="미리 정해둔 집">
+              <button data-house="20,5" aria-pressed="true">자료의 그 집</button>
+              <button data-house="10,14" aria-pressed="false">작고 먼 집</button>
+              <button data-house="45,2" aria-pressed="false">크고 가까운 집</button>
+            </div>
+          </div>
+
+          <div class="verdict" id="h-verdict"></div>
+        </div>
+
+        <div class="card">
+          <h3>은닉층 뉴런 4개 — 곱해서 더하고, 꺾기</h3>
+          <div class="table-scroll">
+            <table>
+              <thead>
+                <tr>
+                  <th style="text-align:left"></th>
+                  <th>계산</th>
+                  <th>결과</th>
+                  <th>꺾은 뒤</th>
+                </tr>
+              </thead>
+              <tbody id="t-neuron"></tbody>
+            </table>
+          </div>
+          <p class="note">
+            가중치는 자료 6-1의 표 그대로입니다 — 평수 쪽 <b>0.3 · 0.1 · −0.2 · 0.5</b>,
+            거리 쪽 <b>−0.4 · 0.2 · 0.3 · −0.1</b>, 편향 <b>1 · 0 · −2 · 0.5</b>.
+          </p>
+        </div>
+
+        <div class="card">
+          <h3>마지막 한 걸음 — 남은 파라미터 5개</h3>
+          <p class="flow" id="out-flow"></p>
+          <div class="big">
+            <span class="v" id="out-v">4.4</span>
+            <span class="u">억 — 이 모델이 내놓은 답</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="plot-box">
+        <canvas id="c2" aria-label="뉴런 네 개의 값과 꺾은 뒤의 값"></canvas>
+        <div class="legend">
+          <span><i class="key thin"></i>꺾기 전 — w·x + b</span>
+          <span><i class="key pen"></i>꺾은 뒤 — 음수는 0</span>
+        </div>
+      </div>
+    </div>
+
+    <details class="memo">
+      <summary>진행자 메모</summary>
+      <ul>
+        <li><b>“자료의 그 집”에서 먼저 4.4억을 확인하세요.</b> 손으로 푼 답과 화면이 같다는 걸
+          보고 나야 슬라이더를 움직일 이유가 생깁니다.</li>
+        <li>그다음 <b>“작고 먼 집”</b>을 누르세요. 자료 6-2에서 죽어 있던 <b>뉴런3이 살아나고,
+          대신 뉴런1이 0이 됩니다.</b> 자료에 글로만 적어둔 그 문장이 여기서 눈에 보입니다.</li>
+        <li>슬라이더를 천천히 밀면서 <b>막대가 0 아래로 내려가는 순간</b>을 짚어주세요.
+          3회차의 “꺾기”가 실제로 하는 일이 이겁니다.</li>
+        <li>1회차 표에서 20평은 <b>실제 4.0억</b>이었습니다. 0.4가 손실이고, 2회차 방법이
+          위 표의 12칸을 조금씩 고쳐서 그걸 줄입니다. 질문 나오면 여기까지만.</li>
+      </ul>
+    </details>
+  </section>
+
+  <!-- ══ 3 ══════════════════════════════════ -->
+  <section class="panel" data-panel="3" hidden>
+    <div class="panel-head">
+      <h2>가중치 표가 곧 그 뉴런이 찾는 모양입니다</h2>
+      <p>
+        왼쪽 격자를 <b>눌러서 그림을 그려보세요.</b> 뉴런 두 개가 각각 얼마나 반응하는지
+        바로 나옵니다. 우리가 “세로줄을 찾아라”라고 시킨 적이 없다는 게 요점입니다.
+      </p>
+    </div>
+
+    <div class="split">
+      <div>
+        <div class="card">
+          <h3>3×3 그림 그리기</h3>
+          <div class="grid-row">
+            <div>
+              <div class="gl">칸을 눌러 획을 그리세요</div>
+              <div class="grid3" id="canvas3" role="group" aria-label="3×3 그림"></div>
+            </div>
+            <div>
+              <div class="gl">컴퓨터가 보는 숫자</div>
+              <div class="grid3" id="mirror3"></div>
+            </div>
+          </div>
+
+          <div class="btn-row">
+            <div class="seg" role="group" aria-label="미리 정해둔 그림">
+              <button data-shape="v" aria-pressed="true">세로줄</button>
+              <button data-shape="h" aria-pressed="false">가로줄</button>
+              <button data-shape="x" aria-pressed="false">십자</button>
+              <button data-shape="0" aria-pressed="false">지우기</button>
+            </div>
+          </div>
+
+          <div class="fire" id="fire-row"></div>
+        </div>
+
+        <div class="card">
+          <h3>계산 — 같은 자리끼리 곱해서 전부 더하기</h3>
+
+          <div class="grid-row" style="margin-bottom:20px">
+            <div>
+              <div class="gl">뉴런A 가중치</div>
+              <div class="grid3 wide" id="wa"></div>
+            </div>
+            <div class="op">×</div>
+            <div>
+              <div class="gl">곱한 결과</div>
+              <div class="grid3 wide" id="pa"></div>
+            </div>
+            <div class="op">=</div>
+            <div>
+              <div class="gl">다 더하면</div>
+              <div class="grid3 wide" style="grid-template-columns:44px">
+                <span id="sa"></span>
+              </div>
+            </div>
+          </div>
+
+          <div class="grid-row">
+            <div>
+              <div class="gl">뉴런B 가중치</div>
+              <div class="grid3 wide" id="wb"></div>
+            </div>
+            <div class="op">×</div>
+            <div>
+              <div class="gl">곱한 결과</div>
+              <div class="grid3 wide" id="pb"></div>
+            </div>
+            <div class="op">=</div>
+            <div>
+              <div class="gl">다 더하면</div>
+              <div class="grid3 wide" style="grid-template-columns:44px">
+                <span id="sb"></span>
+              </div>
+            </div>
+          </div>
+
+          <p class="note">
+            이미지가 <b>0</b> 인 칸은 뭘 곱해도 0이라 싹 사라집니다. <b>1</b> 인 칸만 남고,
+            그 자리의 가중치가 그대로 더해집니다.
+          </p>
+        </div>
+      </div>
+
+      <div>
+        <div class="plot-box">
+          <canvas id="c3" aria-label="두 뉴런이 얼마나 켜졌는지"></canvas>
+          <div class="legend">
+            <span><i class="key thin"></i>꺾기 전</span>
+            <span><i class="key pen"></i>꺾은 뒤 — 음수는 0</span>
+          </div>
+        </div>
+        <div class="verdict" id="s3-verdict" style="margin-top:18px"></div>
+      </div>
+    </div>
+
+    <details class="memo">
+      <summary>진행자 메모</summary>
+      <ul>
+        <li><b>세로줄 → 가로줄 순서로 먼저 누르세요.</b> 뉴런 하나만 켜지고 다른 하나는
+          0으로 죽는 걸 두 번 보여준 다음에 설명을 붙이는 게 낫습니다.</li>
+        <li>그다음 <b>가중치 그림을 다시 보게 하세요.</b> <code>+1</code> 이 놓인 자리가
+          세로줄·가로줄 모양 그대로입니다. 여기서 “아” 소리가 나오면 오늘은 성공입니다.</li>
+        <li><b>십자</b>는 둘 다 조금씩 켜집니다. “그럼 이건 뭐냐”는 질문이 나오면
+          <b>“그래서 층을 더 쌓습니다”</b> 로 받으세요 — 자료 3번의 조합 얘기입니다.</li>
+        <li>아무 칸이나 눌러 이상한 모양을 만들어보게 하는 것도 좋습니다.
+          <b>둘 다 0</b> 이 나오는 그림이 있다는 게 5회차(모른다고 못 함)의 밑밥이 됩니다.</li>
+      </ul>
+    </details>
+  </section>
+
+  <footer class="foot">
+    AI 세션 4회차 · <b>신경망을 키운다는 것</b> 실습용 · 자료 5 ~ 7번
+  </footer>
+</div>
+
+<script>
+(function () {
+  "use strict";
+
+  var css = function (name) {
+    return getComputedStyle(document.documentElement).getPropertyValue(name).trim();
+  };
+
+  var fmt = function (v, d) {
+    if (d === undefined) d = 1;
+    var s = v.toFixed(d);
+    if (s === "-0.0" || s === "-0" || s === "-0.00") s = s.replace("-", "");
+    return s;
+  };
+
+  /* ── 그래프 도구 ─────────────────────── */
+
+  function Plot(canvas, xmin, xmax, ymin, ymax) {
+    this.cv = canvas;
+    this.ctx = canvas.getContext("2d");
+    this.xmin = xmin; this.xmax = xmax;
+    this.ymin = ymin; this.ymax = ymax;
+    this.pad = 30;
+  }
+
+  Plot.prototype.sync = function () {
+    var dpr = window.devicePixelRatio || 1;
+    var w = this.cv.clientWidth;
+    var h = this.cv.clientHeight;
+    if (!w || !h) return false;
+    if (this.cv.width !== Math.round(w * dpr)) {
+      this.cv.width = Math.round(w * dpr);
+      this.cv.height = Math.round(h * dpr);
+    }
+    this.ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    this.w = w; this.h = h;
+    return true;
+  };
+
+  Plot.prototype.px = function (x) {
+    return this.pad + (x - this.xmin) / (this.xmax - this.xmin) * (this.w - this.pad * 2);
+  };
+
+  Plot.prototype.py = function (y) {
+    return this.h - this.pad - (y - this.ymin) / (this.ymax - this.ymin) * (this.h - this.pad * 2);
+  };
+
+  Plot.prototype.clip = function () {
+    var c = this.ctx;
+    c.beginPath();
+    c.rect(this.pad, this.pad, this.w - this.pad * 2, this.h - this.pad * 2);
+    c.clip();
+  };
+
+  Plot.prototype.grid = function (stepX, stepY) {
+    var c = this.ctx, i;
+    c.clearRect(0, 0, this.w, this.h);
+    c.lineWidth = 1;
+    c.strokeStyle = css("--grid");
+    c.beginPath();
+    for (i = Math.ceil(this.xmin / stepX) * stepX; i <= this.xmax + 1e-9; i += stepX) {
+      c.moveTo(Math.round(this.px(i)) + 0.5, this.py(this.ymin));
+      c.lineTo(Math.round(this.px(i)) + 0.5, this.py(this.ymax));
+    }
+    for (i = Math.ceil(this.ymin / stepY) * stepY; i <= this.ymax + 1e-9; i += stepY) {
+      c.moveTo(this.px(this.xmin), Math.round(this.py(i)) + 0.5);
+      c.lineTo(this.px(this.xmax), Math.round(this.py(i)) + 0.5);
+    }
+    c.stroke();
+  };
+
+  Plot.prototype.axes = function (labelStep) {
+    var c = this.ctx, i;
+    c.lineWidth = 1.5;
+    c.strokeStyle = css("--ink-3");
+    c.beginPath();
+    c.moveTo(this.px(this.xmin), Math.round(this.py(0)) + 0.5);
+    c.lineTo(this.px(this.xmax), Math.round(this.py(0)) + 0.5);
+    c.moveTo(Math.round(this.px(0)) + 0.5, this.py(this.ymin));
+    c.lineTo(Math.round(this.px(0)) + 0.5, this.py(this.ymax));
+    c.stroke();
+
+    c.fillStyle = css("--ink-3");
+    c.font = "11px " + css("--font-mono");
+    c.textAlign = "center";
+    c.textBaseline = "top";
+    for (i = Math.ceil(this.xmin / labelStep) * labelStep; i <= this.xmax - 1e-9; i += labelStep) {
+      if (Math.abs(i) < 1e-9) continue;
+      c.fillText(String(Math.round(i)), this.px(i), this.py(0) + 6);
+    }
+    c.textAlign = "right";
+    c.textBaseline = "middle";
+    for (i = Math.ceil(this.ymin / labelStep) * labelStep; i <= this.ymax - 1e-9; i += labelStep) {
+      if (Math.abs(i) < 1e-9) continue;
+      c.fillText(String(Math.round(i)), this.px(0) - 7, this.py(i));
+    }
+  };
+
+  Plot.prototype.curve = function (fn, opt) {
+    var c = this.ctx, x, first = true, y;
+    c.save();
+    this.clip();
+    c.lineWidth = opt.width || 2;
+    c.strokeStyle = opt.color;
+    c.globalAlpha = opt.alpha === undefined ? 1 : opt.alpha;
+    c.setLineDash(opt.dash || []);
+    c.lineJoin = "round";
+    c.lineCap = "round";
+    c.beginPath();
+    for (x = this.xmin; x <= this.xmax + 1e-9; x += (this.xmax - this.xmin) / 480) {
+      y = fn(x);
+      if (!isFinite(y)) { first = true; continue; }
+      if (first) { c.moveTo(this.px(x), this.py(y)); first = false; }
+      else c.lineTo(this.px(x), this.py(y));
+    }
+    c.stroke();
+    c.restore();
+  };
+
+  Plot.prototype.band = function (x0, x1) {
+    var c = this.ctx;
+    if (x1 <= x0) return;
+    c.save();
+    this.clip();
+    c.fillStyle = css("--warm-soft");
+    c.fillRect(this.px(x0), this.py(this.ymax), this.px(x1) - this.px(x0),
+               this.py(this.ymin) - this.py(this.ymax));
+    c.strokeStyle = css("--warm");
+    c.lineWidth = 1.5;
+    c.setLineDash([3, 3]);
+    c.beginPath();
+    c.moveTo(Math.round(this.px(x1)) + 0.5, this.py(this.ymin));
+    c.lineTo(Math.round(this.px(x1)) + 0.5, this.py(this.ymax));
+    c.stroke();
+    c.restore();
+  };
+
+  Plot.prototype.dot = function (x, y, color, r) {
+    var c = this.ctx;
+    c.save();
+    this.clip();
+    c.fillStyle = color;
+    c.beginPath();
+    c.arc(this.px(x), this.py(y), r || 4.5, 0, Math.PI * 2);
+    c.fill();
+    c.restore();
+  };
+
+  Plot.prototype.tag = function (x, y, text, color, dy) {
+    var c = this.ctx;
+    c.save();
+    c.fillStyle = color;
+    c.font = "600 12px " + css("--font-body");
+    c.textAlign = "center";
+    c.textBaseline = "bottom";
+    c.fillText(text, this.px(x), this.py(y) + (dy || -10));
+    c.restore();
+  };
+
+  var plots = [];
+  function register(p, draw) {
+    p.draw = function () { if (p.sync()) draw(p); };
+    plots.push(p);
+    return p;
+  }
+  function redrawAll() {
+    for (var i = 0; i < plots.length; i++) plots[i].draw();
+  }
+
+  /* ── 스텝 전환 ───────────────────────── */
+
+  var tabs = document.querySelectorAll("nav.steps button");
+  var panels = document.querySelectorAll("section.panel");
+
+  Array.prototype.forEach.call(tabs, function (t) {
+    t.addEventListener("click", function () {
+      Array.prototype.forEach.call(tabs, function (o) {
+        o.setAttribute("aria-selected", o === t ? "true" : "false");
+      });
+      Array.prototype.forEach.call(panels, function (p) {
+        p.hidden = p.getAttribute("data-panel") !== t.getAttribute("data-step");
+      });
+      redrawAll();
+      window.scrollTo({ top: 0, behavior: "instant" });
+    });
+  });
+
+    function td(text, cls, align) {
+    return "<td" + (cls ? ' class="' + cls + '"' : "")
+      + (align ? ' style="text-align:' + align + '"' : "") + ">" + text + "</td>";
+  }
+
+  /* 만 · 억 · 조 로 끊어 읽습니다. 10,294,117,647배 는 아무도 못 읽으니까요 */
+  function koBig(n) {
+    if (n < 10000) return comma(Math.round(n));
+    if (n < 1e8) return fmt(n / 1e4, n < 1e6 ? 1 : 0) + "만";
+    if (n < 1e12) return fmt(n / 1e8, n < 1e10 ? 1 : 0) + "억";
+    return fmt(n / 1e12, 1) + "조";
+  }
+
+  function comma(n) {
+    return String(n).replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+  }
+
+  /* ══ 1. 파라미터 세기 ═══════════════════ */
+
+  var net = { i: 2, h: 4, o: 1 };
+  var GPT3 = 175000000000;
+
+  function renderCount() {
+    var w1 = net.i * net.h, b1 = net.h, s1 = w1 + b1;
+    var w2 = net.h * net.o, b2 = net.o, s2 = w2 + b2;
+    var total = s1 + s2;
+
+    document.getElementById("t-count").innerHTML =
+      "<tr>" + td("입력 → 은닉", "", "left")
+        + td(comma(net.i) + " × " + comma(net.h) + " = " + comma(w1), "dim")
+        + td(comma(b1), "dim") + td(comma(s1), "pen") + "</tr>"
+      + "<tr>" + td("은닉 → 출력", "", "left")
+        + td(comma(net.h) + " × " + comma(net.o) + " = " + comma(w2), "dim")
+        + td(comma(b2), "dim") + td(comma(s2), "pen") + "</tr>";
+
+    document.getElementById("c-total").textContent = comma(total);
+    document.getElementById("c-big").textContent = comma(total);
+
+    var verb, feel;
+    if (total <= 60) {
+      verb = "종이에 다 적을 수 있습니다";
+    } else if (total < 1000000) {
+      verb = "노트북에서 몇 분이면 학습이 끝납니다";
+    } else {
+      verb = "이제 눈으로 셀 수 없습니다";
+    }
+    document.getElementById("c-verb").textContent = verb;
+
+    var years = total / 31536000;
+    var gb = total * 2 / 1e9;
+    feel = "1초에 하나씩 적으면 <b>";
+    if (years < 1 / 365) feel += Math.round(total) + "초</b>";
+    else if (years < 1) feel += Math.round(years * 365) + "일</b>";
+    else feel += comma(Math.round(years)) + "년</b>";
+    feel += " · 숫자 하나를 2바이트로 치면 <b>";
+    if (total * 2 < 1024) feel += (total * 2) + "바이트</b>";
+    else if (gb < 0.001) feel += Math.round(total * 2 / 1000) + "KB</b>";
+    else if (gb < 1) feel += fmt(gb * 1000, 1) + "MB</b>";
+    else feel += fmt(gb, 1) + "GB</b>";
+
+    feel += "<br>GPT-3(1750억 개)는 이것의 <b>약 "
+      + koBig(GPT3 / total) + "배</b>입니다. "
+      + "종류가 다른 게 아니라 <b>개수가 다른 것</b>입니다.";
+    document.getElementById("c-feel").innerHTML = feel;
+
+    Array.prototype.forEach.call(document.querySelectorAll("[data-net]"), function (b) {
+      var v = b.getAttribute("data-net").split(",");
+      b.setAttribute("aria-pressed",
+        (+v[0] === net.i && +v[1] === net.h && +v[2] === net.o) ? "true" : "false");
+    });
+
+    p1.draw();
+  }
+
+  function readNet() {
+    var g = function (id, max) {
+      var v = parseInt(document.getElementById(id).value, 10);
+      if (!isFinite(v) || v < 1) v = 1;
+      if (v > max) v = max;
+      return v;
+    };
+    net.i = g("n-in", 4096);
+    net.h = g("n-hid", 4096);
+    net.o = g("n-out", 1024);
+    renderCount();
+  }
+
+  ["n-in", "n-hid", "n-out"].forEach(function (id) {
+    document.getElementById(id).addEventListener("input", readNet);
+  });
+
+  Array.prototype.forEach.call(document.querySelectorAll("[data-net]"), function (b) {
+    b.addEventListener("click", function () {
+      var v = b.getAttribute("data-net").split(",");
+      document.getElementById("n-in").value = v[0];
+      document.getElementById("n-hid").value = v[1];
+      document.getElementById("n-out").value = v[2];
+      readNet();
+    });
+  });
+
+  var p1 = register(new Plot(document.getElementById("c1"), 0, 1, 0, 1), function (p) {
+    var c = p.ctx;
+    c.clearRect(0, 0, p.w, p.h);
+
+    var MAX = 12;
+    if (net.i > MAX || net.h > MAX || net.o > MAX) {
+      c.fillStyle = css("--ink-2");
+      c.font = "600 15px " + css("--font-body");
+      c.textAlign = "center";
+      c.textBaseline = "middle";
+      c.fillText("선이 " + comma(net.i * net.h + net.h * net.o) + "개라 못 그립니다",
+                 p.w / 2, p.h / 2 - 12);
+      c.fillStyle = css("--ink-3");
+      c.font = "13px " + css("--font-body");
+      c.fillText("그래도 세는 방법은 왼쪽 표 그대로입니다", p.w / 2, p.h / 2 + 14);
+      return;
+    }
+
+    var cols = [
+      { n: net.i, x: 0.16, label: "입력" },
+      { n: net.h, x: 0.5, label: "은닉 뉴런" },
+      { n: net.o, x: 0.84, label: "출력" }
+    ];
+    var top = 46, bot = p.h - 34;
+
+    function ys(n) {
+      var a = [], i;
+      if (n === 1) return [(top + bot) / 2];
+      for (i = 0; i < n; i++) a.push(top + (bot - top) * i / (n - 1));
+      return a;
+    }
+
+    var pts = cols.map(function (col) {
+      return ys(col.n).map(function (y) { return { x: col.x * p.w, y: y }; });
+    });
+
+    c.strokeStyle = css("--pen");
+    c.globalAlpha = 0.32;
+    c.lineWidth = 1;
+    c.beginPath();
+    [0, 1].forEach(function (L) {
+      pts[L].forEach(function (a) {
+        pts[L + 1].forEach(function (b) {
+          c.moveTo(a.x, a.y);
+          c.lineTo(b.x, b.y);
+        });
+      });
+    });
+    c.stroke();
+    c.globalAlpha = 1;
+
+    pts.forEach(function (list, L) {
+      list.forEach(function (q) {
+        c.beginPath();
+        c.arc(q.x, q.y, 7, 0, Math.PI * 2);
+        c.fillStyle = L === 1 ? css("--warm-soft") : css("--card");
+        c.fill();
+        c.strokeStyle = L === 1 ? css("--warm") : css("--ink-3");
+        c.lineWidth = 1.6;
+        c.stroke();
+      });
+      c.fillStyle = css("--ink-2");
+      c.font = "600 12.5px " + css("--font-body");
+      c.textAlign = "center";
+      c.textBaseline = "bottom";
+      c.fillText(cols[L].label + " " + cols[L].n, cols[L].x * p.w, top - 16);
+    });
+
+    c.fillStyle = css("--ink-3");
+    c.font = "11.5px " + css("--font-mono");
+    c.textBaseline = "top";
+    c.fillText("선 " + comma(net.i * net.h + net.h * net.o) + "개 · 동그라미 편향 "
+      + comma(net.h + net.o) + "개", p.w / 2, bot + 12);
+  });
+
+  /* ══ 2. 17개 통과시키기 ═════════════════ */
+
+  /* 자료 6-1 의 가중치 표 — 세로 한 줄이 뉴런 하나 */
+  var W1 = [[0.3, 0.1, -0.2, 0.5], [-0.4, 0.2, 0.3, -0.1]];
+  var B1 = [1, 0, -2, 0.5];
+  var W2 = [0.2, 0.1, 0.4, 0.3];
+  var B2 = 0.1;
+
+  var house = { py: 20, mn: 5 };
+
+  function neurons() {
+    var z = [], i;
+    for (i = 0; i < 4; i++) z.push(house.py * W1[0][i] + house.mn * W1[1][i] + B1[i]);
+    return z;
+  }
+
+  function renderHouse() {
+    var z = neurons(), a = z.map(function (v) { return Math.max(0, v); });
+    var html = "", i;
+    for (i = 0; i < 4; i++) {
+      var neg = function (v) { return v < 0 ? "(−" + fmt(-v, 1) + ")" : fmt(v, 1); };
+      var calc = house.py + "×" + neg(W1[0][i])
+        + " + " + house.mn + "×" + neg(W1[1][i])
+        + " + " + (B1[i] < 0 ? "(−" + fmt(-B1[i], 0) + ")"
+                             : fmt(B1[i], B1[i] % 1 ? 1 : 0));
+      html += "<tr>"
+        + td("뉴런" + (i + 1), "", "left")
+        + td(calc, "dim")
+        + td(fmt(z[i], 2), z[i] < 0 ? "warm-cell" : "")
+        + td(fmt(a[i], 2), a[i] === 0 ? "dead" : "pen")
+        + "</tr>";
+    }
+    document.getElementById("t-neuron").innerHTML = html;
+
+    var out = B2, i2;
+    for (i2 = 0; i2 < 4; i2++) out += a[i2] * W2[i2];
+    document.getElementById("out-flow").textContent =
+      a.map(function (v, k) { return fmt(v, 2) + "×" + fmt(W2[k], 1); }).join(" + ")
+      + " + " + fmt(B2, 1);
+    document.getElementById("out-v").textContent = fmt(out, 2);
+
+    var dead = [];
+    a.forEach(function (v, k) { if (v === 0) dead.push("뉴런" + (k + 1)); });
+    var v = document.getElementById("h-verdict");
+    if (dead.length === 0) {
+      v.innerHTML = "이 집에는 <b>네 뉴런이 전부</b> 한마디씩 했습니다.";
+    } else if (dead.length === 4) {
+      v.innerHTML = "<b>네 뉴런이 전부 0</b> 입니다. 은닉층이 아무 말도 하지 않았으니 "
+        + "답은 편향 <b>" + fmt(B2, 1) + "</b> 하나로 결정됐습니다.";
+    } else {
+      v.innerHTML = "<b>" + dead.join(" · ") + "</b> 이(가) 0이 됐습니다 — "
+        + "이 집에 대해서는 <b>아무 말도 하지 않은 것</b>입니다.";
+    }
+
+    document.getElementById("s-py-out").textContent = house.py;
+    document.getElementById("s-mn-out").textContent = house.mn + "분";
+    Array.prototype.forEach.call(document.querySelectorAll("[data-house]"), function (b) {
+      var q = b.getAttribute("data-house").split(",");
+      b.setAttribute("aria-pressed",
+        (+q[0] === house.py && +q[1] === house.mn) ? "true" : "false");
+    });
+
+    p2.draw();
+  }
+
+  function setHouse(py, mn) {
+    house.py = py; house.mn = mn;
+    document.getElementById("s-py").value = String(py);
+    document.getElementById("s-mn").value = String(mn);
+    renderHouse();
+  }
+
+  document.getElementById("s-py").addEventListener("input", function () {
+    setHouse(parseInt(this.value, 10), house.mn);
+  });
+  document.getElementById("s-mn").addEventListener("input", function () {
+    setHouse(house.py, parseInt(this.value, 10));
+  });
+  Array.prototype.forEach.call(document.querySelectorAll("[data-house]"), function (b) {
+    b.addEventListener("click", function () {
+      var q = b.getAttribute("data-house").split(",");
+      setHouse(+q[0], +q[1]);
+    });
+  });
+
+  /* 뉴런 4개를 막대로 — 0 아래로 내려간 것이 꺾기로 잘려나갑니다 */
+  function bars(p, vals, labels, lo, hi) {
+    var c = p.ctx, i;
+    c.clearRect(0, 0, p.w, p.h);
+    var top = 30, bot = p.h - 42, H = bot - top;
+    var zero = top + H * (hi / (hi - lo));
+    var slot = (p.w - 40) / vals.length;
+    var bw = Math.min(54, slot * 0.44);
+
+    c.strokeStyle = css("--rule");
+    c.lineWidth = 1;
+    c.setLineDash([3, 3]);
+    c.beginPath();
+    for (i = 0; i <= 4; i++) {
+      var yy = top + H * i / 4;
+      c.moveTo(24, Math.round(yy) + 0.5);
+      c.lineTo(p.w - 12, Math.round(yy) + 0.5);
+    }
+    c.stroke();
+    c.setLineDash([]);
+
+    c.strokeStyle = css("--ink-3");
+    c.lineWidth = 1.5;
+    c.beginPath();
+    c.moveTo(24, Math.round(zero) + 0.5);
+    c.lineTo(p.w - 12, Math.round(zero) + 0.5);
+    c.stroke();
+
+    c.fillStyle = css("--ink-3");
+    c.font = "11px " + css("--font-mono");
+    c.textAlign = "right";
+    c.textBaseline = "middle";
+    for (i = 0; i <= 4; i++) {
+      var v = hi - (hi - lo) * i / 4;
+      c.fillText(fmt(v, 0), 20, top + H * i / 4);
+    }
+
+    vals.forEach(function (v, k) {
+      var cx = 24 + slot * (k + 0.5) + 8;
+      var a = Math.max(0, v);
+      var yv = top + H * ((hi - v) / (hi - lo));
+      var ya = top + H * ((hi - a) / (hi - lo));
+
+      /* 꺾기 전 */
+      c.fillStyle = css("--pen");
+      c.globalAlpha = 0.22;
+      c.fillRect(cx - bw / 2 - 6, Math.min(zero, yv), bw, Math.abs(zero - yv));
+      c.globalAlpha = 1;
+
+      /* 꺾은 뒤 */
+      c.fillStyle = css("--pen");
+      c.fillRect(cx - bw / 2 + 6, Math.min(zero, ya), bw, Math.max(1, Math.abs(zero - ya)));
+
+      c.fillStyle = v < 0 ? css("--warm") : css("--ink");
+      c.font = "600 12.5px " + css("--font-mono");
+      c.textAlign = "center";
+      c.textBaseline = v < 0 ? "top" : "bottom";
+      c.fillText(fmt(v, 1), cx, v < 0 ? yv + 4 : yv - 5);
+
+      c.fillStyle = a === 0 ? css("--ink-3") : css("--ink-2");
+      c.font = "12px " + css("--font-body");
+      c.textBaseline = "top";
+      c.fillText(labels[k] + (a === 0 ? " (0)" : ""), cx, bot + 12);
+    });
+  }
+
+  var p2 = register(new Plot(document.getElementById("c2"), 0, 1, 0, 1), function (p) {
+    var z = neurons();
+    var hi = Math.max(6, Math.ceil(Math.max.apply(null, z) / 5) * 5);
+    var lo = Math.min(-6, Math.floor(Math.min.apply(null, z) / 5) * 5);
+    bars(p, z, ["뉴런1", "뉴런2", "뉴런3", "뉴런4"], lo, hi);
+  });
+
+  /* ══ 3. 가중치 = 찾는 모양 ══════════════ */
+
+  var SHAPES = {
+    v: [0, 1, 0, 0, 1, 0, 0, 1, 0],
+    h: [0, 0, 0, 1, 1, 1, 0, 0, 0],
+    x: [0, 1, 0, 1, 1, 1, 0, 1, 0],
+    "0": [0, 0, 0, 0, 0, 0, 0, 0, 0]
+  };
+  var WA = [-1, 1, -1, -1, 1, -1, -1, 1, -1];
+  var WB = [-1, -1, -1, 1, 1, 1, -1, -1, -1];
+
+  var img = SHAPES.v.slice();
+
+  function cellClass(v) { return v > 0 ? "pos" : (v < 0 ? "neg" : "zero"); }
+
+  function fillGrid(id, vals, fmtFn) {
+    var html = "", i;
+    for (i = 0; i < 9; i++)
+      html += '<span class="' + cellClass(vals[i]) + '">' + fmtFn(vals[i]) + "</span>";
+    document.getElementById(id).innerHTML = html;
+  }
+
+  function dot(w) {
+    var s = 0, i;
+    for (i = 0; i < 9; i++) s += img[i] * w[i];
+    return s;
+  }
+
+  function renderShape() {
+    var i, html = "";
+    for (i = 0; i < 9; i++)
+      html += '<button type="button" data-i="' + i + '" aria-pressed="'
+        + (img[i] ? "true" : "false") + '" aria-label="' + (i + 1) + '번 칸">'
+        + (img[i] ? "█" : "") + "</button>";
+    document.getElementById("canvas3").innerHTML = html;
+    Array.prototype.forEach.call(
+      document.getElementById("canvas3").querySelectorAll("button"),
+      function (b) {
+        b.addEventListener("click", function () {
+          var k = +b.getAttribute("data-i");
+          img[k] = img[k] ? 0 : 1;
+          renderShape();
+        });
+      });
+
+    fillGrid("mirror3", img, function (v) { return String(v); });
+    fillGrid("wa", WA, function (v) { return v > 0 ? "+1" : "−1"; });
+    fillGrid("wb", WB, function (v) { return v > 0 ? "+1" : "−1"; });
+
+    var pa = [], pb = [];
+    for (i = 0; i < 9; i++) { pa.push(img[i] * WA[i]); pb.push(img[i] * WB[i]); }
+    fillGrid("pa", pa, function (v) { return v > 0 ? "+1" : (v < 0 ? "−1" : "0"); });
+    fillGrid("pb", pb, function (v) { return v > 0 ? "+1" : (v < 0 ? "−1" : "0"); });
+
+    var sa = dot(WA), sb = dot(WB);
+    var ea = document.getElementById("sa"), eb = document.getElementById("sb");
+    ea.textContent = (sa > 0 ? "+" : "") + sa;
+    eb.textContent = (sb > 0 ? "+" : "") + sb;
+    ea.className = cellClass(sa);
+    eb.className = cellClass(sb);
+
+    var ra = Math.max(0, sa), rb = Math.max(0, sb);
+    document.getElementById("fire-row").innerHTML =
+      '<span class="chip' + (ra > 0 ? " on" : "") + '">뉴런A <b>' + ra + "</b></span>"
+      + '<span class="chip' + (rb > 0 ? " on" : "") + '">뉴런B <b>' + rb + "</b></span>"
+      + '<span class="chip">꺾기 전 <b>' + sa + " · " + sb + "</b></span>";
+
+    var key = img.join(",");
+    Array.prototype.forEach.call(document.querySelectorAll("[data-shape]"), function (b) {
+      b.setAttribute("aria-pressed",
+        SHAPES[b.getAttribute("data-shape")].join(",") === key ? "true" : "false");
+    });
+
+    var v = document.getElementById("s3-verdict");
+    if (ra > 0 && rb === 0) {
+      v.innerHTML = "<b>뉴런A만 켜졌습니다.</b> 우리가 “세로줄을 찾아라”라고 시킨 적이 없습니다. "
+        + "가중치 숫자를 저렇게 놓으니까 <b>저절로 그렇게 된 것</b>입니다.";
+    } else if (rb > 0 && ra === 0) {
+      v.innerHTML = "<b>뉴런B만 켜졌습니다.</b> 가중치 표에서 <b>+1</b> 이 놓인 자리를 다시 보세요 — "
+        + "가로줄 모양 그대로입니다.";
+    } else if (ra > 0 && rb > 0) {
+      v.innerHTML = "<b>둘 다 조금씩 켜졌습니다.</b> 세로줄 성분도 가로줄 성분도 있는 그림이라 그렇습니다. "
+        + "이런 걸 갈라내려고 <b>층을 더 쌓습니다.</b>";
+    } else {
+      v.innerHTML = "<b>둘 다 0입니다.</b> 이 그림에 대해 은닉층이 아무 말도 하지 않았습니다. "
+        + "모델이 아는 모양이 두 개뿐이라 그렇습니다.";
+    }
+
+    p3.draw();
+  }
+
+  Array.prototype.forEach.call(document.querySelectorAll("[data-shape]"), function (b) {
+    b.addEventListener("click", function () {
+      img = SHAPES[b.getAttribute("data-shape")].slice();
+      renderShape();
+    });
+  });
+
+  var p3 = register(new Plot(document.getElementById("c3"), 0, 1, 0, 1), function (p) {
+    bars(p, [dot(WA), dot(WB)], ["뉴런A — 세로줄", "뉴런B — 가로줄"], -4, 4);
+  });
+
+  /* 주소 끝에 #2 처럼 붙이면 그 단계로 바로 열립니다 */
+  function openFromHash() {
+    var h = (location.hash || "").replace("#", "");
+    if (!h) return;
+    var b = document.querySelector('nav.steps button[data-step="' + h + '"]');
+    if (b) b.click();
+  }
+  window.addEventListener("hashchange", openFromHash);
+
+  function boot() {
+    renderCount();
+    renderHouse();
+    renderShape();
+    openFromHash();
+  }
+
+  /* ── 인쇄 · PDF 저장 ──────────────────── */
+
+  /* 탭을 전부 펴고 접힌 메모를 연 다음 canvas 를 다시 그립니다.
+     숨어 있던 canvas 는 폭이 0이라 그 전엔 백지입니다 */
+  function expandAll() {
+    document.body.classList.add("flat");
+    Array.prototype.forEach.call(document.querySelectorAll("section.panel"),
+      function (s) { s.hidden = false; });
+    Array.prototype.forEach.call(document.querySelectorAll("details"),
+      function (d) { d.open = true; });
+    redrawAll();
+    requestAnimationFrame(redrawAll);
+  }
+
+  window.addEventListener("beforeprint", expandAll);
+
+  (function () {
+    var bar = document.createElement("div");
+    bar.className = "print-bar";
+
+    var flat = document.createElement("button");
+    flat.type = "button";
+    flat.textContent = "전체 펼치기";
+    flat.addEventListener("click", expandAll);
+
+    var pr = document.createElement("button");
+    pr.type = "button";
+    pr.textContent = "인쇄 · PDF로 저장";
+    pr.addEventListener("click", function () {
+      expandAll();
+      setTimeout(function () { window.print(); }, 260);
+    });
+
+    bar.appendChild(flat);
+    bar.appendChild(pr);
+    var top = document.querySelector("header.top");
+    if (top) top.appendChild(bar);
+  })();
+/* ── 테마 · 리사이즈 ─────────────────── */
+
+  if (window.ResizeObserver) {
+    var ro = new ResizeObserver(redrawAll);
+    plots.forEach(function (p) { ro.observe(p.cv); });
+  } else {
+    window.addEventListener("resize", redrawAll);
+  }
+
+  new MutationObserver(redrawAll).observe(document.documentElement, {
+    attributes: true, attributeFilter: ["data-theme", "class", "style"]
+  });
+
+  if (window.matchMedia) {
+    var mq = window.matchMedia("(prefers-color-scheme: dark)");
+    if (mq.addEventListener) mq.addEventListener("change", redrawAll);
+  }
+
+  boot();
+  redrawAll();
+  requestAnimationFrame(redrawAll);
+})();
+</script>
+
+</html>
